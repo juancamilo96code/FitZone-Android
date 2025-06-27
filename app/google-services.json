@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "846520911210",
+    "firebase_url": "https://fitzone-d0c07-default-rtdb.firebaseio.com",
+    "project_id": "fitzone-d0c07",
+    "storage_bucket": "fitzone-d0c07.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:846520911210:android:aea59a3051f4ec50601113",
+        "android_client_info": {
+          "package_name": "com.vamaju.fitzone"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBa-TFiS51gWMOvhODktRDuxcoaYd5yzl8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
