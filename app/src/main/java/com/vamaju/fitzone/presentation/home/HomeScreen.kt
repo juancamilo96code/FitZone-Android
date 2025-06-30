@@ -44,7 +44,6 @@ import com.vamaju.fitzone.ui.theme.FitZoneTheme
  * @author Juan Camilo Collantes Tovar on 28/06/2025
  * **/
 
-// Definir los colores y la tipografía para reutilizarlos (igual que en el ejemplo anterior).
 private val OnBackgroundPrimary = Color(0xFF111418)
 private val OnBackgroundSecondary = Color(0xFF60758a)
 private val BackgroundSurface = Color(0xFFf0f2f5)
@@ -54,49 +53,48 @@ val list = listOf(
         id = "1",
         name = "Explora la Naturaleza",
         description = "Una descripción corta de lo que esta tarjeta representa. Puede tener varias líneas.",
-        imageUrl = "https://picsum.photos/seed/picsum/800/600" // URL de ejemplo
+        imageUrl = "https://picsum.photos/seed/picsum/800/600"
     ),
     ClassTypeData(
         id = "1",
         name = "Explora la Naturaleza",
         description = "Una descripción corta de lo que esta tarjeta representa. Puede tener varias líneas.",
-        imageUrl = "https://picsum.photos/seed/picsum/800/600" // URL de ejemplo
+        imageUrl = "https://picsum.photos/seed/picsum/800/600"
     ),
     ClassTypeData(
         id = "1",
         name = "Explora la Naturaleza",
         description = "Una descripción corta de lo que esta tarjeta representa. Puede tener varias líneas.",
-        imageUrl = "https://picsum.photos/seed/picsum/800/600" // URL de ejemplo
+        imageUrl = "https://picsum.photos/seed/picsum/800/600"
     ),
     ClassTypeData(
         id = "1",
         name = "Explora la Naturaleza",
         description = "Una descripción corta de lo que esta tarjeta representa. Puede tener varias líneas.",
-        imageUrl = "https://picsum.photos/seed/picsum/800/600" // URL de ejemplo
+        imageUrl = "https://picsum.photos/seed/picsum/800/600"
     ),
     ClassTypeData(
         id = "1",
         name = "Explora la Naturaleza",
         description = "Una descripción corta de lo que esta tarjeta representa. Puede tener varias líneas.",
-        imageUrl = "https://picsum.photos/seed/picsum/800/600" // URL de ejemplo
+        imageUrl = "https://picsum.photos/seed/picsum/800/600"
     ),
     ClassTypeData(
         id = "1",
         name = "Explora la Naturaleza",
         description = "Una descripción corta de lo que esta tarjeta representa. Puede tener varias líneas.",
-        imageUrl = "https://picsum.photos/seed/picsum/800/600" // URL de ejemplo
+        imageUrl = "https://picsum.photos/seed/picsum/800/600"
     )
 )
 
 
 @Composable
 fun HomeScreen(
-    //viewModel: HomeViewModel = hiltViewModel(),
     navigateToDetail: (String) -> Unit
 ) {
     Scaffold(
         topBar = {
-            HomeTopBar(onNotificationsClick = { /* Handle click */ })
+            HomeTopBar(onNotificationsClick = {  })
         },
         containerColor = Color.White
     ) { paddingValues ->
@@ -145,8 +143,7 @@ fun HomeTopBar(onNotificationsClick: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        // Título "FitZone"
-        // 1. Usar un Spacer con weight para alinear el título al centro.
+
         Spacer(Modifier.weight(1f))
         Text(
             text = "FitZone",
@@ -155,11 +152,9 @@ fun HomeTopBar(onNotificationsClick: () -> Unit) {
                 color = OnBackgroundPrimary
             ),
             textAlign = TextAlign.Center,
-            modifier = Modifier.weight(3f) // Ocupa más espacio para centrar
+            modifier = Modifier.weight(3f)
         )
 
-        // Botón de notificaciones
-        // 2. Usar IconButton para el botón de icono.
         Box(
             modifier = Modifier.size(48.dp),
             contentAlignment = Alignment.CenterEnd
@@ -187,10 +182,10 @@ fun HomeTopBar(onNotificationsClick: () -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(modifier: Modifier = Modifier, placeholder: String) {
-    // 3. Usar TextField de Material 3.
+
     TextField(
-        value = "", // En una implementación real, esto sería un estado mutable.
-        onValueChange = { /* Update search query state */ },
+        value = "",
+        onValueChange = {},
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp)

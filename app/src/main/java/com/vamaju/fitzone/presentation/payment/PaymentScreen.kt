@@ -49,7 +49,6 @@ import com.vamaju.fitzone.ui.theme.FitZoneTheme
  * @author Juan Camilo Collantes Tovar on 28/06/2025
  * **/
 
-// Definir los colores y la tipografía para reutilizarlos.
 private val OnBackgroundPrimary = Color(0xFF111418)
 private val OnBackgroundSecondary = Color(0xFF60758a)
 private val BackgroundGray = Color(0xFFf0f2f5)
@@ -85,7 +84,7 @@ fun PaymentScreen(onClose: () -> Unit) {
                 .background(Color.White)
                 .padding(paddingValues)
         ) {
-            // Sección de método de pago
+
             SectionTitle(title = "Payment Method")
             PaymentMethodSelector(
                 paymentMethods = listOf("**** 1234", "Add Payment Method"),
@@ -93,7 +92,6 @@ fun PaymentScreen(onClose: () -> Unit) {
                 onMethodSelected = { method -> selectedPaymentMethod = method }
             )
 
-            // Campos del formulario
             PaymentInputField(
                 placeholder = "Card Number",
                 value = cardNumber,
@@ -155,7 +153,7 @@ fun PaymentTopBar(onClose: () -> Unit) {
                         color = OnBackgroundPrimary
                     ),
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(end = 48.dp) // Offset para centrar con el icono.
+                    modifier = Modifier.padding(end = 48.dp)
                 )
             }
         },

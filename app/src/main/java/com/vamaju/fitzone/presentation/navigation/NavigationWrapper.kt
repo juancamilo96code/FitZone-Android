@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.google.firebase.auth.FirebaseAuth
+import com.vamaju.fitzone.presentation.book_class.BookClassScreen
 import com.vamaju.fitzone.presentation.class_details.ClassTypeDetailsScreen
 import com.vamaju.fitzone.presentation.home.HomeScreen
 import com.vamaju.fitzone.presentation.login_email.LogInEmailScreen
@@ -56,18 +57,31 @@ fun NavigationWrapper(navHostController: NavHostController, auth: FirebaseAuth) 
 
         composable<ClassTypeDetails> { backStackEntry ->
             val classTypeDetails: ClassTypeDetails = backStackEntry.toRoute()
-            ClassTypeDetailsScreen(){}
+            ClassTypeDetailsScreen(
+                navigateToBookClass = { id ->
+                    navHostController.navigate(BookClass(id))
+                }
+            ) {}
 
         }
 
 
-        composable<BookClass>() {
+        composable<BookClass>() { backStackEntry ->
+            val bookClass: BookClass = backStackEntry.toRoute()
+            BookClassScreen {
+
+            }
+        }
+
+        composable<MyClasses> {
 
         }
 
         composable<Payments>() {
 
         }
+
+        composable <Notifications>() {  }
     }
 
 }

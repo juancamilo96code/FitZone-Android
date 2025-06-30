@@ -76,10 +76,8 @@ fun RegisterEmailScreen(auth: FirebaseAuth,
         Button(onClick = {
             auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 if(task.isSuccessful){
-                    //Registrado
                     navigateToLogin()
                 }else{
-                    //Error
                 }
             }
         }) {

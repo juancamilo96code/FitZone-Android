@@ -9,7 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.vamaju.fitzone.presentation.navigation.NavigationWrapper
+import com.vamaju.fitzone.presentation.commons.MainScreen
 import com.vamaju.fitzone.ui.theme.FitZoneTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             navHostController = rememberNavController()
             FitZoneTheme {
-                NavigationWrapper(
+                MainScreen(
                     navHostController = navHostController,
                     auth = auth
                 )

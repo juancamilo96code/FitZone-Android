@@ -40,41 +40,38 @@ fun ClassTypeCardItem (
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
-            .height(200.dp), // Define una altura fija para los items
-        shape = RoundedCornerShape(16.dp), // Bordes redondeados
+            .height(200.dp),
+        shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            // 1. Imagen de fondo desde URL
+
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(item.imageUrl)
-                    .crossfade(true) // Animación suave al cargar la imagen
+                    .crossfade(true)
                     .build(),
                 contentDescription = "Fondo para ${item.name}",
-                contentScale = ContentScale.Crop, // Escala la imagen para llenar el contenedor
+                contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
 
-            // 2. Scrim (opcional pero recomendado)
-            // Un gradiente oscuro en la parte inferior para que el texto sea legible
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(
                         Brush.verticalGradient(
                             colors = listOf(Color.Transparent, Color.Black),
-                            startY = 300f, // Empieza el gradiente más abajo
+                            startY = 300f,
                             endY = Float.POSITIVE_INFINITY
                         )
                     )
             )
 
-            // 3. Contenido de texto (Título y Descripción)
             Column(
                 modifier = Modifier
-                    .align(Alignment.BottomStart) // Alinea el contenido abajo y a la izquierda
-                    .padding(16.dp) // Padding interno
+                    .align(Alignment.BottomStart)
+                    .padding(16.dp)
             ) {
                 Text(
                     text = item.name,
@@ -96,7 +93,6 @@ fun ClassTypeCardItem (
     }
 }
 
-// Preview para ver el diseño en Android Studio
 @Preview(showBackground = true)
 @Composable
 fun ItemCardPreview() {
@@ -104,7 +100,7 @@ fun ItemCardPreview() {
         id = "1",
         name = "Explora la Naturaleza",
         description = "Una descripción corta de lo que esta tarjeta representa. Puede tener varias líneas.",
-        imageUrl = "https://picsum.photos/seed/picsum/800/600" // URL de ejemplo
+        imageUrl = "https://picsum.photos/seed/picsum/800/600" //
     )
     ClassTypeCardItem(item = sampleItem, onClick = {})
 }

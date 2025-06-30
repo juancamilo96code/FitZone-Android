@@ -24,65 +24,15 @@ data class ClassTypeDetails(
 )
 
 @Serializable
-object BookClass
+data class BookClass(
+    val classId: String,
+)
+
+@Serializable
+object MyClasses
+
+@Serializable
+object Notifications
 
 @Serializable
 object Payments
-
-
-
-
-
-
-
-
-
-@Serializable
-object Logout
-
-
-@Serializable
-data class PointRegister(val senderId: String = "")
-
-@Serializable
-data class ProcessDetails(
-    val vehicleInterventionId: Long,
-    val plate: String
-)
-
-@Serializable
-data class RegisterInProgress(val operationId: Long)
-
-@Serializable
-data class RegisterFinished(val operationId: Long)
-
-@Serializable
-data class NewRegister(val operationId: Long)
-
-@Serializable
-data class PedagogueIntervention(
-    val vehicleInterventionId: Long,
-    val plate: String
-)
-
-@Serializable
-data class MechanicReview(
-    val vehicleInterventionId: Long,
-    val vehicleType: String,
-    val plate: String
-)
-
-@Serializable
-data class FinishIntervention(
-    val vehicleInterventionId: Long,
-    val plate: String
-)
-
-@Serializable
-data class Map(val currentPointId: String)
-
-@Serializable
-data class GridEvidence(val categoryId: String)
-
-@Serializable
-data class EvidenceCheckOutCarrousel(val categoryId: String)

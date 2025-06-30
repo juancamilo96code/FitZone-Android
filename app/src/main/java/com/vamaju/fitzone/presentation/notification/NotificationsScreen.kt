@@ -45,12 +45,12 @@ import com.vamaju.fitzone.ui.theme.FitZoneTheme
  * @author Juan Camilo Collantes Tovar on 28/06/2025
  * **/
 
-// Definir los colores y la tipografía para reutilizarlos.
+
 val OnBackgroundPrimary = Color(0xFF111418)
 val OnBackgroundSecondary = Color(0xFF60758a)
 val BackgroundSurface = Color(0xFFf0f2f5)
 
-// Definir los tipos de notificación para el modelo de datos.
+
 data class Notification(
     val title: String,
     val time: String
@@ -65,7 +65,7 @@ data class NotificationGroup(
 fun NotificationsScreen(
     onBackClick: () -> Unit
 ) {
-    // 1. Usa Scaffold para estructurar la pantalla.
+
     Scaffold(
         topBar = {
             NotificationsTopBar(onBackClick = onBackClick)
@@ -75,13 +75,13 @@ fun NotificationsScreen(
         },
         containerColor = Color.White
     ) { paddingValues ->
-        // 2. Usa LazyColumn para listas eficientes.
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            // Datos de ejemplo
+
             val notificationsByDate = listOf(
                 NotificationGroup(
                     date = "Today",
@@ -99,7 +99,6 @@ fun NotificationsScreen(
                 )
             )
 
-            // 3. Itera sobre los grupos de notificaciones para generar los elementos de la UI.
             notificationsByDate.forEach { group ->
                 item {
                     NotificationHeader(date = group.date)
@@ -124,7 +123,7 @@ fun NotificationsTopBar(onBackClick: () -> Unit) {
             .padding(16.dp, 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // 4. Usa IconButton para el botón de retroceso.
+
         IconButton(
             onClick = onBackClick,
             modifier = Modifier.size(48.dp)
@@ -135,7 +134,7 @@ fun NotificationsTopBar(onBackClick: () -> Unit) {
                 tint = OnBackgroundPrimary
             )
         }
-        // 5. Usa Spacer y weight() para centrar el título.
+
         Spacer(Modifier.weight(1f))
         Text(
             text = "Notifications",
@@ -146,8 +145,8 @@ fun NotificationsTopBar(onBackClick: () -> Unit) {
                 letterSpacing = (-0.015).sp
             )
         )
-        // Espacio para alinear el título.
-        Spacer(Modifier.width(48.dp)) // Ocupa el mismo espacio que el IconButton
+
+        Spacer(Modifier.width(48.dp))
     }
 }
 
@@ -182,7 +181,7 @@ fun NotificationItem(notification: Notification) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // 6. Usa Box para el contenedor del ícono.
+
         Box(
             modifier = Modifier
                 .size(48.dp)
@@ -198,7 +197,7 @@ fun NotificationItem(notification: Notification) {
             )
         }
 
-        // 7. Usa Column para los textos.
+
         Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.Center
@@ -243,7 +242,7 @@ fun BottomNavigationBar() {
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // 8. Crea composables reutilizables para los elementos de la barra inferior.
+
             BottomNavigationItem(
                 icon = Icons.Default.Home,
                 label = "Home",
@@ -260,7 +259,6 @@ fun BottomNavigationBar() {
                 isSelected = false
             )
         }
-        // Espacio para la barra de navegación del sistema
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
@@ -279,7 +277,7 @@ fun BottomNavigationItem(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = Modifier.width(64.dp) // Ancho fijo para cada ítem
+        modifier = Modifier.width(64.dp)
     ) {
         Icon(
             imageVector = icon,
@@ -290,7 +288,7 @@ fun BottomNavigationItem(
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall.copy(
-                fontSize = 10.sp, // Ajuste de tamaño de fuente
+                fontSize = 10.sp,
                 fontWeight = FontWeight.Medium,
                 color = contentColor,
                 lineBreak = LineBreak.Simple
@@ -305,7 +303,7 @@ fun BottomNavigationItem(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun NotificationsScreenPreview() {
-    FitZoneTheme { // Asegúrate de usar tu tema
+    FitZoneTheme {
         NotificationsScreen(onBackClick = {})
     }
 }
