@@ -5,96 +5,44 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.vamaju.fitzone.presentation.commons.composables.search_bar.SearchBar
+import com.vamaju.fitzone.presentation.commons.composables.topbar.HomeTopBar
 import com.vamaju.fitzone.presentation.home.composables.ClassTypeCardItem
-import com.vamaju.fitzone.presentation.home.model.ClassTypeData
 import com.vamaju.fitzone.ui.theme.FitZoneTheme
 
 /**
  * @author Juan Camilo Collantes Tovar on 28/06/2025
  * **/
 
-private val OnBackgroundPrimary = Color(0xFF111418)
-private val OnBackgroundSecondary = Color(0xFF60758a)
-private val BackgroundSurface = Color(0xFFf0f2f5)
-
-val list = listOf(
-    ClassTypeData(
-        id = "1",
-        name = "Explora la Naturaleza",
-        description = "Una descripción corta de lo que esta tarjeta representa. Puede tener varias líneas.",
-        imageUrl = "https://picsum.photos/seed/picsum/800/600"
-    ),
-    ClassTypeData(
-        id = "1",
-        name = "Explora la Naturaleza",
-        description = "Una descripción corta de lo que esta tarjeta representa. Puede tener varias líneas.",
-        imageUrl = "https://picsum.photos/seed/picsum/800/600"
-    ),
-    ClassTypeData(
-        id = "1",
-        name = "Explora la Naturaleza",
-        description = "Una descripción corta de lo que esta tarjeta representa. Puede tener varias líneas.",
-        imageUrl = "https://picsum.photos/seed/picsum/800/600"
-    ),
-    ClassTypeData(
-        id = "1",
-        name = "Explora la Naturaleza",
-        description = "Una descripción corta de lo que esta tarjeta representa. Puede tener varias líneas.",
-        imageUrl = "https://picsum.photos/seed/picsum/800/600"
-    ),
-    ClassTypeData(
-        id = "1",
-        name = "Explora la Naturaleza",
-        description = "Una descripción corta de lo que esta tarjeta representa. Puede tener varias líneas.",
-        imageUrl = "https://picsum.photos/seed/picsum/800/600"
-    ),
-    ClassTypeData(
-        id = "1",
-        name = "Explora la Naturaleza",
-        description = "Una descripción corta de lo que esta tarjeta representa. Puede tener varias líneas.",
-        imageUrl = "https://picsum.photos/seed/picsum/800/600"
-    )
-)
-
-
 @Composable
 fun HomeScreen(
+    viewModel: HomeViewModel = hiltViewModel(),
     navigateToDetail: (String) -> Unit
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     Scaffold(
         topBar = {
-            HomeTopBar(onNotificationsClick = {  })
+            HomeTopBar(onNotificationsClick = { })
         },
         containerColor = Color.White
     ) { paddingValues ->
@@ -110,109 +58,75 @@ fun HomeScreen(
                 placeholder = "Find a class"
             )
 
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(horizontal = 4.dp)
-            ) {
-                items(list) { item ->
-                    ClassTypeCardItem(
-                        item = item,
-                        onClick = {
-                            navigateToDetail(item.id)
+            /*SearchBar(
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                placeholder = "Find a class",
+                value = uiState.searchQuery,
+                onValueChange = viewModel::onSearchQueryChanged
+            )*/
+
+            when{
+                uiState.isLoading->{
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+                uiState.errorMessage != null -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = "Error: ${uiState.errorMessage}", color = MaterialTheme.colorScheme.error)
+                    }
+                }
+                uiState.classTypes.isEmpty() && uiState.searchQuery.isNotEmpty() -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = "No se encontraron resultados para '${uiState.searchQuery}'")
+                    }
+                }
+
+                uiState.classTypes.isEmpty() -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = "No hay clases disponibles en este momento.")
+                    }
+                }
+
+                else -> {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                    ) {
+                        item {
+                            Text(
+                                text = "Próximas Clases",
+                                style = MaterialTheme.typography.titleLarge.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF111418)
+                                ),
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
                         }
-                    )
+
+                        items(uiState.classTypes) { classType ->
+                            ClassTypeCardItem(
+                                item = classType,
+                                onClick = {navigateToDetail(classType.id)})
+                        }
+                    }
                 }
             }
         }
     }
-}
-
-/**
- * Barra superior de la pantalla de inicio.
- */
-@Composable
-fun HomeTopBar(onNotificationsClick: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White)
-            .padding(16.dp, 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-
-        Spacer(Modifier.weight(1f))
-        Text(
-            text = "FitZone",
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontWeight = FontWeight.Bold,
-                color = OnBackgroundPrimary
-            ),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.weight(3f)
-        )
-
-        Box(
-            modifier = Modifier.size(48.dp),
-            contentAlignment = Alignment.CenterEnd
-        ) {
-            IconButton(
-                onClick = onNotificationsClick,
-                modifier = Modifier.size(48.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Notifications,
-                    contentDescription = "Notifications",
-                    tint = OnBackgroundPrimary,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-        }
-    }
-}
-
-/**
- * Barra de búsqueda.
- *
- * @OptIn(ExperimentalMaterial3Api::class) se usa para habilitar las APIs experimentales.
- */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SearchBar(modifier: Modifier = Modifier, placeholder: String) {
-
-    TextField(
-        value = "",
-        onValueChange = {},
-        modifier = modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .clip(RoundedCornerShape(12.dp)),
-        placeholder = {
-            Text(text = placeholder, color = OnBackgroundSecondary)
-        },
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = "Search icon",
-                tint = OnBackgroundSecondary,
-                modifier = Modifier.size(24.dp)
-            )
-        },
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = BackgroundSurface,
-            unfocusedContainerColor = BackgroundSurface,
-            disabledContainerColor = BackgroundSurface,
-            cursorColor = OnBackgroundPrimary,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
-        ),
-        singleLine = true,
-        textStyle = MaterialTheme.typography.bodyLarge.copy(color = OnBackgroundPrimary)
-    )
 }
 
 @Preview(showBackground = true, showSystemUi = true)

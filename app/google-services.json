@@ -13,7 +13,20 @@
           "package_name": "com.vamaju.fitzone"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "846520911210-iqdok4jqqpa9q0i7gup6e54o4t6v1tns.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vamaju.fitzone",
+            "certificate_hash": "9093ff8875244733fa31fc1cb1f106550618bd5c"
+          }
+        },
+        {
+          "client_id": "846520911210-0hdf2sp8lmb26l8eb3aoqod0mn266feh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBa-TFiS51gWMOvhODktRDuxcoaYd5yzl8"
@@ -21,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "846520911210-0hdf2sp8lmb26l8eb3aoqod0mn266feh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
