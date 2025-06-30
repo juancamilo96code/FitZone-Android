@@ -25,14 +25,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.vamaju.fitzone.presentation.home.model.ClassTypeData
+import com.vamaju.fitzone.domain.classes.model.ClassType
 
 /**
  * @author Juan Camilo Collantes Tovar on 29/06/2025
  * **/
 @Composable
 fun ClassTypeCardItem (
-    item: ClassTypeData,
+    item: ClassType,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ){
@@ -96,7 +96,7 @@ fun ClassTypeCardItem (
 @Preview(showBackground = true)
 @Composable
 fun ItemCardPreview() {
-    val sampleItem = ClassTypeData(
+    val sampleItem = ClassType(
         id = "1",
         name = "Explora la Naturaleza",
         description = "Una descripción corta de lo que esta tarjeta representa. Puede tener varias líneas.",
