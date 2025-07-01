@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.sp
 /**
  * @author Juan Camilo Collantes Tovar on 30/06/2025
  * **/
-private val OnBackgroundPrimary = Color(0xFF111418)
 
 @Composable
 fun SectionTitle(title: String, modifier: Modifier = Modifier) {
@@ -21,7 +20,6 @@ fun SectionTitle(title: String, modifier: Modifier = Modifier) {
         text = title,
         style = MaterialTheme.typography.titleMedium.copy(
             fontWeight = FontWeight.Bold,
-            color = OnBackgroundPrimary,
             lineHeight = 24.sp,
             letterSpacing = (-0.015).sp
         ),

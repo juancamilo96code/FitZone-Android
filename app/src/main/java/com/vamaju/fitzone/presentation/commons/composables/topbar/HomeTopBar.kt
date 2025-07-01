@@ -1,6 +1,5 @@
 package com.vamaju.fitzone.presentation.commons.composables.topbar
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -17,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -25,16 +23,12 @@ import androidx.compose.ui.unit.dp
 /**
  * @author Juan Camilo Collantes Tovar on 30/06/2025
  * **/
-private val OnBackgroundPrimary = Color(0xFF111418)
-private val OnBackgroundSecondary = Color(0xFF60758a)
-private val BackgroundSurface = Color(0xFFf0f2f5)
 
 @Composable
 fun HomeTopBar(onNotificationsClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White)
             .padding(16.dp, 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -45,7 +39,6 @@ fun HomeTopBar(onNotificationsClick: () -> Unit) {
             text = "FitZone",
             style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight.Bold,
-                color = OnBackgroundPrimary
             ),
             textAlign = TextAlign.Center,
             modifier = Modifier.weight(3f)
@@ -62,7 +55,6 @@ fun HomeTopBar(onNotificationsClick: () -> Unit) {
                 Icon(
                     imageVector = Icons.Default.Notifications,
                     contentDescription = "Notifications",
-                    tint = OnBackgroundPrimary,
                     modifier = Modifier.size(24.dp)
                 )
             }

@@ -1,7 +1,5 @@
 package com.vamaju.fitzone.presentation.book_class
 
-import android.R
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -13,14 +11,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -30,7 +23,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -40,29 +32,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.vamaju.fitzone.domain.classes.model.ClassModel
 import com.vamaju.fitzone.presentation.book_class.composables.SubscriptionTypeCard
-import com.vamaju.fitzone.presentation.book_class.model.SubscriptionTypes
 import com.vamaju.fitzone.presentation.class_details.composables.ScheduleOptionCard
-import com.vamaju.fitzone.presentation.class_details.model.ClassDetailUiState
 import com.vamaju.fitzone.ui.theme.FitZoneTheme
 
 /**
  * @author Juan Camilo Collantes Tovar on 28/06/2025
  * **/
-
-private val OnBackgroundPrimary = Color(0xFF111418)
-private val OnBackgroundSecondary = Color(0xFF60758a)
-private val PrimaryBlue = Color(0xFF3d98f4)
-private val BorderGray = Color(0xFFdbe0e6)
-
 
 @Composable
 fun BookClassScreen(
@@ -83,20 +65,19 @@ fun BookClassScreen(
             BookClassTopBar(onClose = onClose)
         },
         bottomBar = {
-            BookClassBottomBar(onBookClass  = viewModel::onBookClassClicked)
+            BookClassBottomBar(onBookClass = viewModel::onBookClassClicked)
         },
-        containerColor = Color.White
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White)
                 .padding(paddingValues)
         ) {
 
             uiState.classDetails?.let { classDetails ->
                 item {
                     ScheduleOptionCard(
+                        modifier = Modifier.padding(horizontal = 16.dp),
                         classItem = classDetails,
                         isSelected = true,
                         onClick = {}
@@ -109,24 +90,46 @@ fun BookClassScreen(
                 item { CircularProgressIndicator() }
 
             } else if (uiState.errorMessage != null) {
-                item { Text(text = uiState.errorMessage!!, color = MaterialTheme.colorScheme.error)}
+                item {
+                    Text(
+                        text = uiState.errorMessage!!,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
 
             } else if (uiState.bookingSuccess) {
-                item { Text("¡Clase agendada con éxito!", style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.primary) }
+                item {
+                    Text(
+                        "¡Clase agendada con éxito!",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(top = 16.dp)
+                    )
+                }
             } else {
                 if (uiState.hasActiveSubscription) {
                     item {
-                        Text("Tu suscripción actual:", style = MaterialTheme.typography.titleMedium)
+                        Text(
+                            "Tu suscripción actual:",
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(top = 16.dp)
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(uiState.activeSubscriptionDetails ?: "Suscripción activa", style = MaterialTheme.typography.bodyLarge)
+                        Text(
+                            uiState.activeSubscriptionDetails ?: "Suscripción activa",
+                            modifier = Modifier.padding(top = 16.dp),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
                     }
                 } else {
                     item {
-                        SectionTitle(title = "Pay plans")
+                        SectionTitle(title = "Pay plans", modifier = Modifier.padding(top = 16.dp))
                     }
 
                     items(uiState.subscriptionOptions) { subscription ->
                         SubscriptionTypeCard(
+                            modifier = Modifier.padding(horizontal = 16.dp),
                             subscription = subscription,
                             isSelected = subscription.id == selectedSubscriptionId,
                             onClick = { clickedSubscription ->
@@ -174,7 +177,6 @@ fun BookClassTopBar(onClose: () -> Unit) {
                     text = "Book ClassModel",
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
-                        color = OnBackgroundPrimary
                     ),
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(end = 48.dp)
@@ -186,13 +188,9 @@ fun BookClassTopBar(onClose: () -> Unit) {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = "Close",
-                    tint = OnBackgroundPrimary
                 )
             }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.White
-        )
+        }
     )
 }
 
@@ -206,7 +204,6 @@ fun SectionTitle(title: String, modifier: Modifier = Modifier) {
         text = title,
         style = MaterialTheme.typography.titleMedium.copy(
             fontWeight = FontWeight.Bold,
-            color = OnBackgroundPrimary,
             lineHeight = 24.sp,
             letterSpacing = (-0.015).sp
         ),
@@ -222,7 +219,6 @@ fun BookClassBottomBar(onBookClass: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White)
             .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
         Button(
@@ -230,10 +226,6 @@ fun BookClassBottomBar(onBookClass: () -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = PrimaryBlue,
-                contentColor = Color.White
-            ),
             shape = RoundedCornerShape(8.dp),
             contentPadding = PaddingValues(horizontal = 20.dp)
         ) {
