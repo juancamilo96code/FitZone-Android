@@ -39,10 +39,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vamaju.fitzone.domain.classes.model.ClassModel
 import com.vamaju.fitzone.presentation.book_class.composables.SubscriptionTypeCard
 import com.vamaju.fitzone.presentation.book_class.model.SubscriptionTypes
 import com.vamaju.fitzone.presentation.class_details.composables.ScheduleOptionCard
-import com.vamaju.fitzone.presentation.class_details.model.ClassDetails
+import com.vamaju.fitzone.presentation.class_details.model.ClassDetailUiState
 import com.vamaju.fitzone.ui.theme.FitZoneTheme
 
 /**
@@ -91,19 +92,7 @@ fun BookClassScreen(onClose: () -> Unit) {
         )
     )
 
-    val classSelected = ClassDetails(
-        id = "3",
-        typeName = "Yoga Flow Avanzado",
-        date = "2025-07-15",
-        time = "18:30",
-        duration = "01:15",
-        address = "Carrera 10 # 20-30, Bogotá D.C.",
-        locationId = "LOC001",
-        locationName = "FitZone Centro",
-        latitude = 4.6097,
-        longitude = -74.0817,
-        instructorName = "Ana Smith",
-    )
+    val classSelected = ClassModel()
 
     Scaffold(
         topBar = {
@@ -122,7 +111,7 @@ fun BookClassScreen(onClose: () -> Unit) {
         ) {
             item {
                 ScheduleOptionCard(
-                    classDetails = classSelected,
+                    classItem = classSelected,
                     isSelected = true,
                     onClick = {}
                 )
@@ -159,7 +148,7 @@ fun BookClassTopBar(onClose: () -> Unit) {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Book Class",
+                    text = "Book ClassModel",
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
                         color = OnBackgroundPrimary
@@ -226,7 +215,7 @@ fun BookClassBottomBar(onBookClass: () -> Unit) {
             contentPadding = PaddingValues(horizontal = 20.dp)
         ) {
             Text(
-                text = "Book Class",
+                text = "Book ClassModel",
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.015.sp

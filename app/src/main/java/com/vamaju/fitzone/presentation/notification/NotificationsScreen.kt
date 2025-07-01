@@ -86,15 +86,15 @@ fun NotificationsScreen(
                 NotificationGroup(
                     date = "Today",
                     notifications = listOf(
-                        Notification("Yoga Class Reminder", "10:00 AM"),
-                        Notification("New Class Alert: HIIT", "12:30 PM")
+                        Notification("Yoga ClassModel Reminder", "10:00 AM"),
+                        Notification("New ClassModel Alert: HIIT", "12:30 PM")
                     )
                 ),
                 NotificationGroup(
                     date = "Yesterday",
                     notifications = listOf(
                         Notification("FitZone Promotion", "09:15 AM"),
-                        Notification("Class Schedule Update", "06:00 PM")
+                        Notification("ClassModel Schedule Update", "06:00 PM")
                     )
                 )
             )

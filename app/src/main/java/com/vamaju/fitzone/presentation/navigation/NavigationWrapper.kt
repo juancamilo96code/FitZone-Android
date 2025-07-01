@@ -58,13 +58,13 @@ fun NavigationWrapper(navHostController: NavHostController, auth: FirebaseAuth) 
         composable<ClassTypeDetails> { backStackEntry ->
             val classTypeDetails: ClassTypeDetails = backStackEntry.toRoute()
             ClassTypeDetailsScreen(
+                classTypeId = classTypeDetails.classTypeId,
                 navigateToBookClass = { id ->
                     navHostController.navigate(BookClass(id))
                 }
             ) {}
 
         }
-
 
         composable<BookClass>() { backStackEntry ->
             val bookClass: BookClass = backStackEntry.toRoute()

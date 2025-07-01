@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -35,7 +34,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -43,10 +41,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import com.vamaju.fitzone.R
 import com.vamaju.fitzone.presentation.class_details.composables.ScheduleOptionCard
-import com.vamaju.fitzone.presentation.class_details.model.ClassDetails
 import com.vamaju.fitzone.ui.theme.FitZoneTheme
 
 /**
@@ -64,57 +59,6 @@ private val OnBackgroundSecondary = Color(0xFF60758a)
 private val BackgroundSurface = Color(0xFFf0f2f5)
 private val PrimaryBlue = Color(0xFF3d98f4)
 private val GrayBackground = Color(0xFFdbe0e6)
-
-
-data class Review(
-    val author: String,
-    val timeAgo: String,
-    val rating: Int,
-    val comment: String,
-    val likes: Int,
-    val dislikes: Int,
-    val profilePictureUrl: String
-)
-
-val list = listOf(
-    ClassDetails(
-        id = "1",
-        typeName = "Yoga Flow Avanzado",
-        date = "2025-07-15",
-        time = "18:30",
-        duration = "01:15",
-        address = "Carrera 10 # 20-30, Bogotá D.C.",
-        locationId = "LOC001",
-        locationName = "FitZone Centro",
-        latitude = 4.6097,
-        longitude = -74.0817,
-        instructorName = "Ana Smith",
-    ), ClassDetails(
-        id = "2",
-        typeName = "Yoga Flow Avanzado",
-        date = "2025-07-15",
-        time = "18:30",
-        duration = "01:15",
-        address = "Carrera 10 # 20-30, Bogotá D.C.",
-        locationId = "LOC001",
-        locationName = "FitZone Centro",
-        latitude = 4.6097,
-        longitude = -74.0817,
-        instructorName = "Ana Smith",
-    ), ClassDetails(
-        id = "3",
-        typeName = "Yoga Flow Avanzado",
-        date = "2025-07-15",
-        time = "18:30",
-        duration = "01:15",
-        address = "Carrera 10 # 20-30, Bogotá D.C.",
-        locationId = "LOC001",
-        locationName = "FitZone Centro",
-        latitude = 4.6097,
-        longitude = -74.0817,
-        instructorName = "Ana Smith",
-    )
-)
 
 /**
  * Composable principal de la pantalla de detalles de la clase.
@@ -142,16 +86,16 @@ fun MyClassesScreen(
                 .background(Color.White)
                 .padding(paddingValues)
         ) {
-            items(list) { classDetail ->
+            items(emptyList<String>()) { classDetail ->
 
-                ScheduleOptionCard(
-                    classDetails = classDetail,
+                /*ScheduleOptionCard(
+                    classDetailUiState = classDetail,
                     isSelected = classDetail.id == selectedClassId,
                     onClick = { clickedClass ->
                         selectedClassId =
                             clickedClass.id
                     }
-                )
+                )*/
             }
         }
     }
@@ -171,7 +115,7 @@ fun ClassDetailsTopBar(onClose: () -> Unit) {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Class Details",
+                    text = "ClassModel Details",
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
                         color = OnBackgroundPrimary
@@ -290,7 +234,7 @@ fun BookClassBottomBar(onBookClass: () -> Unit) {
             contentPadding = PaddingValues(horizontal = 20.dp)
         ) {
             Text(
-                text = "Book Class",
+                text = "Book ClassModel",
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
         }

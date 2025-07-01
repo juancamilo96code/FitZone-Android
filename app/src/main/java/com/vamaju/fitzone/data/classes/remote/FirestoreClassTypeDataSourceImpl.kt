@@ -16,7 +16,7 @@ import javax.inject.Singleton
 @Singleton
 class FirestoreClassTypeDataSourceImpl @Inject constructor(
     private val firestore: FirebaseFirestore
-):FirestoreClassTypeDataSource {
+):ClassTypeDataSource {
     override fun getClassTypes(): Flow<List<ClassTypeDto>> = callbackFlow{
         val collectionRef = firestore.collection("ClassType")
 
