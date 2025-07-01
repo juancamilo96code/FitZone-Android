@@ -65,7 +65,7 @@ fun BookClassScreen(
             BookClassTopBar(onClose = onClose)
         },
         bottomBar = {
-            BookClassBottomBar(onBookClass  = viewModel::onBookClassClicked)
+            BookClassBottomBar(onBookClass = viewModel::onBookClassClicked)
         },
     ) { paddingValues ->
         LazyColumn(
@@ -77,6 +77,7 @@ fun BookClassScreen(
             uiState.classDetails?.let { classDetails ->
                 item {
                     ScheduleOptionCard(
+                        modifier = Modifier.padding(horizontal = 16.dp),
                         classItem = classDetails,
                         isSelected = true,
                         onClick = {}
@@ -89,24 +90,46 @@ fun BookClassScreen(
                 item { CircularProgressIndicator() }
 
             } else if (uiState.errorMessage != null) {
-                item { Text(text = uiState.errorMessage!!, color = MaterialTheme.colorScheme.error)}
+                item {
+                    Text(
+                        text = uiState.errorMessage!!,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
 
             } else if (uiState.bookingSuccess) {
-                item { Text("¡Clase agendada con éxito!", style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.primary) }
+                item {
+                    Text(
+                        "¡Clase agendada con éxito!",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(top = 16.dp)
+                    )
+                }
             } else {
                 if (uiState.hasActiveSubscription) {
                     item {
-                        Text("Tu suscripción actual:", style = MaterialTheme.typography.titleMedium)
+                        Text(
+                            "Tu suscripción actual:",
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(top = 16.dp)
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(uiState.activeSubscriptionDetails ?: "Suscripción activa", style = MaterialTheme.typography.bodyLarge)
+                        Text(
+                            uiState.activeSubscriptionDetails ?: "Suscripción activa",
+                            modifier = Modifier.padding(top = 16.dp),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
                     }
                 } else {
                     item {
-                        SectionTitle(title = "Pay plans")
+                        SectionTitle(title = "Pay plans", modifier = Modifier.padding(top = 16.dp))
                     }
 
                     items(uiState.subscriptionOptions) { subscription ->
                         SubscriptionTypeCard(
+                            modifier = Modifier.padding(horizontal = 16.dp),
                             subscription = subscription,
                             isSelected = subscription.id == selectedSubscriptionId,
                             onClick = { clickedSubscription ->

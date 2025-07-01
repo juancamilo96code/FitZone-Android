@@ -1,6 +1,5 @@
 package com.vamaju.fitzone.presentation.scheduled_classes
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -21,7 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -60,9 +57,6 @@ fun BookedClassesScreen(
         topBar = {
             ClassDetailsTopBar(onClose = onClose)
         },
-        bottomBar = {
-            BookClassBottomBar(onBookClass = { selectedClassId?.let { navigateToBookClass(it) } })
-        },
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
@@ -79,7 +73,8 @@ fun BookedClassesScreen(
 
                 uiState.errorMessage != null -> {
                     item {
-                        Text(text = uiState.errorMessage!!)
+                        Text(text = uiState.errorMessage!!,
+                            modifier = Modifier.padding(16.dp),)
                     }
                 }
 
@@ -91,18 +86,20 @@ fun BookedClassesScreen(
                             style = MaterialTheme.typography.titleLarge,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 8.dp)
+                                .padding(vertical = 8.dp, horizontal = 16.dp)
                         )
                     }
 
 
                     if (uiState.upcomingClasses.isEmpty()) {
                         item {
-                            Text("No tienes próximas clases agendadas.")
+                            Text("No tienes próximas clases agendadas.",
+                                modifier = Modifier.padding(16.dp))
                         }
                     } else {
                         items(uiState.upcomingClasses, key = { it.id }) { classItem ->
                             ScheduleOptionCard(
+                                modifier = Modifier.padding(horizontal = 16.dp),
                                 classItem = classItem,
                                 isSelected = true,
                                 onClick = {}) // Reutiliza tu componente de tarjeta de clase
@@ -116,18 +113,20 @@ fun BookedClassesScreen(
                             style = MaterialTheme.typography.titleLarge,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 8.dp)
+                                .padding(vertical = 8.dp,horizontal = 16.dp)
                         )
                     }
 
 
                     if (uiState.pastClasses.isEmpty()) {
                         item {
-                            Text("No tienes clases pasadas agendadas.")
+                            Text("No tienes clases pasadas agendadas.",
+                                modifier = Modifier.padding(16.dp))
                         }
                     } else {
                         items(uiState.pastClasses, key = { it.id }) { classItem ->
                             ScheduleOptionCard(
+                                modifier = Modifier.padding(horizontal = 16.dp),
                                 classItem = classItem,
                                 isSelected = false,
                                 onClick = {}) // Reutiliza tu componente de tarjeta de clase

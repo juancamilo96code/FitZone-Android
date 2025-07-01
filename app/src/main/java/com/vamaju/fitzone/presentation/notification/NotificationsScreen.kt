@@ -1,6 +1,5 @@
 package com.vamaju.fitzone.presentation.notification
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,14 +15,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -80,7 +75,8 @@ fun NotificationsScreen(
 
                 uiState.errorMessage != null -> {
                     item {
-                        Text(text = uiState.errorMessage!!, color = MaterialTheme.colorScheme.error)
+                        Text(text = uiState.errorMessage!!, color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.padding(16.dp))
                     }
                 }
 
@@ -88,7 +84,8 @@ fun NotificationsScreen(
                     item {
                         Text(
                             text = "No tienes notificaciones.",
-                            style = MaterialTheme.typography.bodyLarge
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(16.dp)
                         )
                     }
                 }
@@ -96,6 +93,7 @@ fun NotificationsScreen(
                 else -> {
                     items(uiState.notifications, key = { it.id }) { notification ->
                         NotificationCard(
+                            modifier = Modifier.padding(16.dp),
                             notification = notification,
                             onNotificationClick = { viewModel.onNotificationClicked(notification.id) }
                         )
@@ -142,43 +140,6 @@ fun NotificationsTopBar(onBackClick: () -> Unit) {
     }
 }
 
-/**
- * Barra de navegación inferior.
- */
-@Composable
-fun BottomNavigationBar() {
-    Column(
-    ) {
-        HorizontalDivider(
-            thickness = 1.dp,
-        )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            BottomNavigationItem(
-                icon = Icons.Default.Home,
-                label = "Home",
-                isSelected = true
-            )
-            BottomNavigationItem(
-                icon = Icons.AutoMirrored.Filled.ExitToApp,
-                label = "Classes",
-                isSelected = false
-            )
-            BottomNavigationItem(
-                icon = Icons.Default.Person,
-                label = "Profile",
-                isSelected = false
-            )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-    }
-}
 
 /**
  * Elemento de la barra de navegación inferior.
@@ -225,12 +186,13 @@ fun NotificationsScreenPreview() {
 @Composable
 fun NotificationCard(
     notification: Notification,
-    onNotificationClick: (String) -> Unit
+    onNotificationClick: (String) -> Unit,
+    modifier: Modifier
 ) {
     val dateFormat = remember { SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()) }
 
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable { onNotificationClick(notification.id) }, // Permite marcar como leída al hacer clic
         colors = CardDefaults.cardColors(
@@ -239,8 +201,7 @@ fun NotificationCard(
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Row(
-            modifier = Modifier
-                .padding(16.dp)
+            modifier = modifier
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {

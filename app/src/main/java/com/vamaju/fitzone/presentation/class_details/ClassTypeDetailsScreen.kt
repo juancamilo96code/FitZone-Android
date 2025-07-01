@@ -221,7 +221,7 @@ fun ClassTypeDetailsScreen(
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
                     ),
-                    modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp),
                 )
 
             }
@@ -271,6 +271,7 @@ fun ClassTypeDetailsScreen(
                         key = { it.id }) { classItem ->
                         // ClassCard que muestra los detalles de la clase
                         ScheduleOptionCard(
+                            modifier = Modifier.padding(horizontal = 16.dp),
                             classItem = classItem,
                             isSelected = classItem.id == selectedClassId,
                             onClick = { id ->
