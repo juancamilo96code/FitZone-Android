@@ -8,12 +8,14 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.google.firebase.auth.FirebaseAuth
 import com.vamaju.fitzone.presentation.navigation.MyClasses
 import com.vamaju.fitzone.presentation.navigation.NavigationWrapper
 import com.vamaju.fitzone.presentation.navigation.Notifications
@@ -27,8 +29,11 @@ fun MainScreen(navHostController: NavHostController) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
+    var enable by remember { mutableStateOf(false) }
+
     ModalNavigationDrawer(
         drawerState = drawerState,
+        gesturesEnabled = enable,
         drawerContent = {
 
             ModalDrawerSheet {
@@ -52,16 +57,14 @@ fun MainScreen(navHostController: NavHostController) {
                         }
                     }
                 )
-                NavigationDrawerItem(
-                    label = { Text("Suscripciones") },
-                    selected = false,
-                    onClick = {
-                        scope.launch { drawerState.close() }
-                    }
-                )
             }
         }
     ) {
-        NavigationWrapper( navHostController = navHostController)
+        NavigationWrapper(
+            navHostController = navHostController,
+            onUserLogged = {
+                enable = true
+            }
+        )
     }
 }
