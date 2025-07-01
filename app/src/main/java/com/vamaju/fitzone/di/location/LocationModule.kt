@@ -1,12 +1,8 @@
 package com.vamaju.fitzone.di.location
 
-import com.vamaju.fitzone.data.classes.remote.ClassDetailDataSource
-import com.vamaju.fitzone.data.classes.remote.FirestoreClassDetailDataSource
-import com.vamaju.fitzone.data.classes.repository.ClassDetailRepositoryImpl
 import com.vamaju.fitzone.data.locations.remote.FirestoreLocationDataSource
 import com.vamaju.fitzone.data.locations.remote.LocationDataSource
 import com.vamaju.fitzone.data.locations.repository.LocationRepositoryImpl
-import com.vamaju.fitzone.domain.classes.ClassDetailRepository
 import com.vamaju.fitzone.domain.locations.LocationRepository
 import dagger.Binds
 import dagger.Module
@@ -32,6 +28,5 @@ abstract class LocationModule {
     abstract fun bindClassDetailRepository(
         locationRepositoryImpl: LocationRepositoryImpl
     ): LocationRepository
-
 
 }

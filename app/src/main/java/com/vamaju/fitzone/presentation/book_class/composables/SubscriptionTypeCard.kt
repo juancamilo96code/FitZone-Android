@@ -24,7 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.vamaju.fitzone.presentation.book_class.model.SubscriptionTypes
+import com.vamaju.fitzone.presentation.book_class.model.SubscriptionTypeUiModel
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -33,15 +33,15 @@ import java.util.Locale
  * **/
 @Composable
 fun SubscriptionTypeCard(
-    subscription: SubscriptionTypes,
+    subscription: SubscriptionTypeUiModel,
     isSelected: Boolean,
-    onClick: (SubscriptionTypes) -> Unit,
+    onClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val currencyFormat = remember { NumberFormat.getCurrencyInstance(Locale("es", "CO")) }
 
     Card(
-        onClick = { onClick(subscription) },
+        onClick = { onClick(subscription.id) },
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
@@ -100,8 +100,8 @@ fun SubscriptionTypeCard(
 @Composable
 fun PreviewSubscriptionTypeCard() {
     MaterialTheme {
-        val sampleSubscription = SubscriptionTypes(
-            id = 1,
+        val sampleSubscription = SubscriptionTypeUiModel(
+            id = "1",
             name = "Gold",
             icon = Icons.Default.Star,
             price = 99.99,
@@ -112,7 +112,7 @@ fun PreviewSubscriptionTypeCard() {
             Spacer(modifier = Modifier.height(16.dp))
             SubscriptionTypeCard(
                 subscription = sampleSubscription.copy(
-                    id = 2,
+                    id = "2",
                     name = "Platino",
                     icon = Icons.Default.Star
                 ), isSelected = false, onClick = {})

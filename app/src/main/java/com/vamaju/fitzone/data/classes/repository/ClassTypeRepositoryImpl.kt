@@ -17,6 +17,10 @@ class ClassTypeRepositoryImpl @Inject constructor(
     private val remoteDataSource: ClassTypeDataSource,
 ): ClassTypeRepository {
 
+    override suspend fun getClassTypeById(classTypeId: String): ClassType? {
+        return remoteDataSource.getClassTypeById(classTypeId)?.toDomain()
+    }
+
     override fun getClassTypes(): Flow<List<ClassType>> {
         return remoteDataSource.getClassTypes().map { dtos ->
             dtos.map { it.toDomain() }

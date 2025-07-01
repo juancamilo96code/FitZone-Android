@@ -8,4 +8,5 @@ import kotlinx.coroutines.flow.Flow
  * **/
 interface ClassTypeDataSource {
     fun getClassTypes(): Flow<List<ClassTypeDto>>
+    suspend fun getClassTypeById(classTypeId: String): ClassTypeDto?
 }

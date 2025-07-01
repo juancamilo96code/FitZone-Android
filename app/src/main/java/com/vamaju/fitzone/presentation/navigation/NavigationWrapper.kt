@@ -10,7 +10,9 @@ import com.vamaju.fitzone.presentation.book_class.BookClassScreen
 import com.vamaju.fitzone.presentation.class_details.ClassTypeDetailsScreen
 import com.vamaju.fitzone.presentation.home.HomeScreen
 import com.vamaju.fitzone.presentation.login_email.LogInEmailScreen
+import com.vamaju.fitzone.presentation.notification.NotificationsScreen
 import com.vamaju.fitzone.presentation.register_email.RegisterEmailScreen
+import com.vamaju.fitzone.presentation.scheduled_classes.BookedClassesScreen
 
 /**
  * @author Juan Camilo Collantes Tovar on 27/06/2025
@@ -68,20 +70,28 @@ fun NavigationWrapper(navHostController: NavHostController, auth: FirebaseAuth) 
 
         composable<BookClass>() { backStackEntry ->
             val bookClass: BookClass = backStackEntry.toRoute()
-            BookClassScreen {
+            BookClassScreen(
+                classId = bookClass.classId
+            ) {
 
             }
         }
 
         composable<MyClasses> {
-
+            BookedClassesScreen(
+                navigateToBookClass = {
+                    navHostController.navigate(BookClass(it))
+                },
+                onClose = {})
         }
 
         composable<Payments>() {
 
         }
 
-        composable <Notifications>() {  }
+        composable<Notifications>() {
+            NotificationsScreen { }
+        }
     }
 
 }

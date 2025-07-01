@@ -1,9 +1,10 @@
 package com.vamaju.fitzone.data.classes.repository
 
 import com.vamaju.fitzone.data.classes.remote.ClassDetailDataSource
+import com.vamaju.fitzone.data.user.remote.UserAuthDataSource
+import com.vamaju.fitzone.data.user.remote.UserDataSource
 import com.vamaju.fitzone.domain.classes.ClassDetailRepository
 import com.vamaju.fitzone.domain.classes.model.ClassModel
-import com.vamaju.fitzone.domain.classes.model.ClassType
 import com.vamaju.fitzone.domain.classes.model.toDomain
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -17,13 +18,14 @@ import javax.inject.Singleton
 
 @Singleton
 class ClassDetailRepositoryImpl @Inject constructor(
-    private val remoteDataSource: ClassDetailDataSource
+    private val remoteDataSource: ClassDetailDataSource,
+    private val userDataSource: UserDataSource,
+    private val userAuthDataSource: UserAuthDataSource
 ) : ClassDetailRepository {
 
-    override suspend fun getClassTypeById(classTypeId: String): ClassType? {
-        return remoteDataSource.getClassTypeById(classTypeId)?.toDomain()
+    override suspend fun getClassById(classId: String): ClassModel? {
+        return remoteDataSource.getClassById(classId)?.toDomain()
     }
-
 
     override fun getFilteredClasses(
         classTypeId: String,
@@ -35,5 +37,20 @@ class ClassDetailRepositoryImpl @Inject constructor(
             .map { dtos ->
                 dtos.map { it.toDomain() }
             }
+    }
+
+    override suspend fun getClassesById(classId: String): ClassModel? {
+        return remoteDataSource.getClassById(classId)?.toDomain()
+    }
+
+    override suspend fun getBookedClasses(): List<ClassModel> {
+        val userId = userAuthDataSource.getCurrentUserId()
+            ?: throw IllegalStateException("User not logged in.")
+
+        val user = userDataSource.getUser(userId)
+        val bookedClassIds = user?.classesBooked ?: emptyList()
+
+        // Obtener los detalles completos de las clases
+        return remoteDataSource.getClassesByIds(bookedClassIds).map { it.toDomain() }
     }
 }

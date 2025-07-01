@@ -3,7 +3,6 @@ package com.vamaju.fitzone.data.classes.remote
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.vamaju.fitzone.data.classes.model.ClassDto
-import com.vamaju.fitzone.data.classes.model.ClassTypeDto
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -20,16 +19,6 @@ import javax.inject.Singleton
 class FirestoreClassDetailDataSource @Inject constructor(
     private val firestore: FirebaseFirestore
 ) : ClassDetailDataSource {
-
-    override suspend fun getClassTypeById(classTypeId: String): ClassTypeDto? {
-        return try {
-            val documentSnapshot = firestore.collection("ClassType")
-                .document(classTypeId).get().await()
-            documentSnapshot.toObject(ClassTypeDto::class.java)?.copy(id = documentSnapshot.id)
-        } catch (e: Exception) {
-            null
-        }
-    }
 
     override fun getFilteredClasses(
         classTypeId: String,
@@ -75,5 +64,31 @@ class FirestoreClassDetailDataSource @Inject constructor(
             }
         }
         awaitClose { subscription.remove() }
+    }
+
+    override suspend fun getClassById(classId: String): ClassDto? {
+        return firestore.collection("Class")
+            .document(classId).get().await()
+            .toObject(ClassDto::class.java)?.copy(id = classId)
+    }
+
+    override suspend fun getClassesByIds(classIds: List<String>): List<ClassDto> {
+        if (classIds.isEmpty()) return emptyList()
+
+        // Firestore tiene un límite de 10 IDs en 'whereIn'
+        // Si la lista es grande, deberías dividirla en lotes.
+        val result = mutableListOf<ClassDto>()
+        val chunks = classIds.chunked(10) // Divide la lista en sublistas de 10
+
+        for (chunk in chunks) {
+            val snapshot = firestore.collection("Class")
+                .whereIn(com.google.firebase.firestore.FieldPath.documentId(), chunk)
+                .get()
+                .await()
+            result.addAll(snapshot.documents.mapNotNull { doc ->
+                doc.toObject(ClassDto::class.java)?.copy(id = doc.id)
+            })
+        }
+        return result
     }
 }

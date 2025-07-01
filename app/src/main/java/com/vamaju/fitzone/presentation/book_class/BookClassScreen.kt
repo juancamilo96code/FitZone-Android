@@ -1,8 +1,10 @@
 package com.vamaju.fitzone.presentation.book_class
 
+import android.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,17 +18,22 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +46,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.vamaju.fitzone.domain.classes.model.ClassModel
 import com.vamaju.fitzone.presentation.book_class.composables.SubscriptionTypeCard
 import com.vamaju.fitzone.presentation.book_class.model.SubscriptionTypes
@@ -57,49 +65,25 @@ private val BorderGray = Color(0xFFdbe0e6)
 
 
 @Composable
-fun BookClassScreen(onClose: () -> Unit) {
+fun BookClassScreen(
+    viewModel: BookingViewModel = hiltViewModel(),
+    classId: String,
+    onClose: () -> Unit
+) {
 
-    var selectedSubscriptionId by remember { mutableStateOf<Int?>(null) }
+    LaunchedEffect(key1 = Unit) {
+        viewModel.loadClassDetailsAndCheckSubscription(classId = classId)
+    }
+    val uiState by viewModel.uiState.collectAsState()
 
-    val subscriptionList = listOf(
-        SubscriptionTypes(
-            id = 1,
-            name = "Gold",
-            icon = Icons.Default.Star,
-            price = 99.99,
-            type = "Mensual"
-        ),
-        SubscriptionTypes(
-            id = 2,
-            name = "Elite Gold",
-            icon = Icons.Default.CheckCircle,
-            price = 149.99,
-            type = "TriMensual"
-        ),
-        SubscriptionTypes(
-            id = 3,
-            name = "Platino",
-            icon = Icons.Default.Add,
-            price = 199.99,
-            type = "Anual"
-        ),
-        SubscriptionTypes(
-            id = 4,
-            name = "Pago por Clase",
-            icon = Icons.Default.Face,
-            price = 20.00,
-            type = "Por Clase"
-        )
-    )
-
-    val classSelected = ClassModel()
+    var selectedSubscriptionId by remember { mutableStateOf<String?>(null) }
 
     Scaffold(
         topBar = {
             BookClassTopBar(onClose = onClose)
         },
         bottomBar = {
-            BookClassBottomBar(onBookClass = { })
+            BookClassBottomBar(onBookClass  = viewModel::onBookClassClicked)
         },
         containerColor = Color.White
     ) { paddingValues ->
@@ -109,29 +93,68 @@ fun BookClassScreen(onClose: () -> Unit) {
                 .background(Color.White)
                 .padding(paddingValues)
         ) {
-            item {
-                ScheduleOptionCard(
-                    classItem = classSelected,
-                    isSelected = true,
-                    onClick = {}
-                )
+
+            uiState.classDetails?.let { classDetails ->
+                item {
+                    ScheduleOptionCard(
+                        classItem = classDetails,
+                        isSelected = true,
+                        onClick = {}
+                    )
+                }
             }
 
-            item {
-                SectionTitle(title = "Pay plans")
-            }
 
-            items(subscriptionList) { subscription ->
-                SubscriptionTypeCard(
-                    subscription = subscription,
-                    isSelected = subscription.id == selectedSubscriptionId,
-                    onClick = { clickedSubscription ->
-                        selectedSubscriptionId = clickedSubscription.id
+            if (uiState.isLoading) {
+                item { CircularProgressIndicator() }
+
+            } else if (uiState.errorMessage != null) {
+                item { Text(text = uiState.errorMessage!!, color = MaterialTheme.colorScheme.error)}
+
+            } else if (uiState.bookingSuccess) {
+                item { Text("¡Clase agendada con éxito!", style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.primary) }
+            } else {
+                if (uiState.hasActiveSubscription) {
+                    item {
+                        Text("Tu suscripción actual:", style = MaterialTheme.typography.titleMedium)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(uiState.activeSubscriptionDetails ?: "Suscripción activa", style = MaterialTheme.typography.bodyLarge)
                     }
-                )
+                } else {
+                    item {
+                        SectionTitle(title = "Pay plans")
+                    }
+
+                    items(uiState.subscriptionOptions) { subscription ->
+                        SubscriptionTypeCard(
+                            subscription = subscription,
+                            isSelected = subscription.id == selectedSubscriptionId,
+                            onClick = { clickedSubscription ->
+                                selectedSubscriptionId = clickedSubscription
+                            }
+                        )
+                    }
+                }
             }
 
         }
+    }
+    if (uiState.showConfirmationModal) {
+        AlertDialog(
+            onDismissRequest = viewModel::onCancelBooking,
+            title = { Text("Confirmar agendamiento") },
+            text = { Text("¿Estás seguro de que quieres agendar esta clase? Si tienes una suscripción activa, se consumirá un cupo.") },
+            confirmButton = {
+                Button(onClick = viewModel::onConfirmBooking) {
+                    Text("Sí, agendar")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = viewModel::onCancelBooking) {
+                    Text("Cancelar")
+                }
+            }
+        )
     }
 }
 
@@ -215,7 +238,7 @@ fun BookClassBottomBar(onBookClass: () -> Unit) {
             contentPadding = PaddingValues(horizontal = 20.dp)
         ) {
             Text(
-                text = "Book ClassModel",
+                text = "Agendar Clase",
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.015.sp
@@ -229,6 +252,8 @@ fun BookClassBottomBar(onBookClass: () -> Unit) {
 @Composable
 fun BookClassScreenPreview() {
     FitZoneTheme {
-        BookClassScreen(onClose = {})
+        BookClassScreen(
+            classId = "1",
+            onClose = {})
     }
 }

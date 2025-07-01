@@ -40,10 +40,4 @@ abstract class ClassModule {
         firestoreClassDetailDataSource: FirestoreClassDetailDataSource
     ): ClassDetailDataSource
 
-    @Binds
-    @Singleton
-    abstract fun bindClassDetailRepository(
-        classDetailRepositoryImpl: ClassDetailRepositoryImpl
-    ): ClassDetailRepository
-
 }
