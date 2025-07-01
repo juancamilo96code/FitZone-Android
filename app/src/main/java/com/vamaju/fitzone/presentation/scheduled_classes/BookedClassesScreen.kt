@@ -5,12 +5,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,26 +25,20 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import com.vamaju.fitzone.R
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.vamaju.fitzone.presentation.class_details.composables.ScheduleOptionCard
-import com.vamaju.fitzone.presentation.class_details.model.ClassDetails
 import com.vamaju.fitzone.ui.theme.FitZoneTheme
 
 /**
@@ -65,67 +57,18 @@ private val BackgroundSurface = Color(0xFFf0f2f5)
 private val PrimaryBlue = Color(0xFF3d98f4)
 private val GrayBackground = Color(0xFFdbe0e6)
 
-
-data class Review(
-    val author: String,
-    val timeAgo: String,
-    val rating: Int,
-    val comment: String,
-    val likes: Int,
-    val dislikes: Int,
-    val profilePictureUrl: String
-)
-
-val list = listOf(
-    ClassDetails(
-        id = "1",
-        typeName = "Yoga Flow Avanzado",
-        date = "2025-07-15",
-        time = "18:30",
-        duration = "01:15",
-        address = "Carrera 10 # 20-30, Bogotá D.C.",
-        locationId = "LOC001",
-        locationName = "FitZone Centro",
-        latitude = 4.6097,
-        longitude = -74.0817,
-        instructorName = "Ana Smith",
-    ), ClassDetails(
-        id = "2",
-        typeName = "Yoga Flow Avanzado",
-        date = "2025-07-15",
-        time = "18:30",
-        duration = "01:15",
-        address = "Carrera 10 # 20-30, Bogotá D.C.",
-        locationId = "LOC001",
-        locationName = "FitZone Centro",
-        latitude = 4.6097,
-        longitude = -74.0817,
-        instructorName = "Ana Smith",
-    ), ClassDetails(
-        id = "3",
-        typeName = "Yoga Flow Avanzado",
-        date = "2025-07-15",
-        time = "18:30",
-        duration = "01:15",
-        address = "Carrera 10 # 20-30, Bogotá D.C.",
-        locationId = "LOC001",
-        locationName = "FitZone Centro",
-        latitude = 4.6097,
-        longitude = -74.0817,
-        instructorName = "Ana Smith",
-    )
-)
-
 /**
  * Composable principal de la pantalla de detalles de la clase.
  *
  * Usa un `Scaffold` con una barra superior, un contenido desplazable y una barra inferior.
  */
 @Composable
-fun MyClassesScreen(
+fun BookedClassesScreen(
+    viewModel: BookedClassesViewModel = hiltViewModel(),
     navigateToBookClass: (String) -> Unit,
     onClose: () -> Unit
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     var selectedClassId by remember { mutableStateOf<String?>(null) }
     Scaffold(
         topBar = {
@@ -142,16 +85,71 @@ fun MyClassesScreen(
                 .background(Color.White)
                 .padding(paddingValues)
         ) {
-            items(list) { classDetail ->
 
-                ScheduleOptionCard(
-                    classDetails = classDetail,
-                    isSelected = classDetail.id == selectedClassId,
-                    onClick = { clickedClass ->
-                        selectedClassId =
-                            clickedClass.id
+            when {
+                uiState.isLoading -> {
+                    item {
+                        CircularProgressIndicator()
                     }
-                )
+                }
+
+                uiState.errorMessage != null -> {
+                    item {
+                        Text(text = uiState.errorMessage!!, color = MaterialTheme.colorScheme.error)
+                    }
+                }
+
+                else -> {
+                    item {
+                        // Sección de Próximas Clases
+                        Text(
+                            text = "Próximas Clases",
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp)
+                        )
+                    }
+
+
+                    if (uiState.upcomingClasses.isEmpty()) {
+                        item {
+                            Text("No tienes próximas clases agendadas.")
+                        }
+                    } else {
+                        items(uiState.upcomingClasses, key = { it.id }) { classItem ->
+                            ScheduleOptionCard(
+                                classItem = classItem,
+                                isSelected = true,
+                                onClick = {}) // Reutiliza tu componente de tarjeta de clase
+                        }
+                    }
+
+                    item {
+                        // Sección de Clases Pasadas
+                        Text(
+                            text = "Clases Pasadas",
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp)
+                        )
+                    }
+
+
+                    if (uiState.pastClasses.isEmpty()) {
+                        item {
+                            Text("No tienes clases pasadas agendadas.")
+                        }
+                    } else {
+                        items(uiState.pastClasses, key = { it.id }) { classItem ->
+                            ScheduleOptionCard(
+                                classItem = classItem,
+                                isSelected = false,
+                                onClick = {}) // Reutiliza tu componente de tarjeta de clase
+                        }
+                    }
+                }
             }
         }
     }
@@ -171,7 +169,7 @@ fun ClassDetailsTopBar(onClose: () -> Unit) {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Class Details",
+                    text = "ClassModel Details",
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
                         color = OnBackgroundPrimary
@@ -196,75 +194,6 @@ fun ClassDetailsTopBar(onClose: () -> Unit) {
     )
 }
 
-/**
- * Título de sección reutilizable.
- */
-@Composable
-fun SectionTitle(title: String, modifier: Modifier = Modifier) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.titleMedium.copy(
-            fontWeight = FontWeight.Bold,
-            color = OnBackgroundPrimary,
-            lineHeight = 24.sp,
-            letterSpacing = (-0.015).sp
-        ),
-        modifier = modifier.padding(top = 24.dp, bottom = 8.dp)
-    )
-}
-
-/**
- * Elemento de detalle con icono, título y subtítulo.
- */
-@Composable
-fun DetailsItem(
-    iconRes: Int,
-    title: String,
-    subtitle: String? = null
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .size(48.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(BackgroundSurface),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                painter = painterResource(id = iconRes),
-                contentDescription = null,
-                tint = OnBackgroundPrimary,
-                modifier = Modifier.size(24.dp)
-            )
-        }
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
-                color = OnBackgroundPrimary,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            if (subtitle != null) {
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = OnBackgroundSecondary,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-        }
-    }
-}
 
 /**
  * Barra inferior con el botón de reserva.
@@ -290,7 +219,7 @@ fun BookClassBottomBar(onBookClass: () -> Unit) {
             contentPadding = PaddingValues(horizontal = 20.dp)
         ) {
             Text(
-                text = "Book Class",
+                text = "Book ClassModel",
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
         }
@@ -307,6 +236,6 @@ fun BookClassBottomBar(onBookClass: () -> Unit) {
 @Composable
 fun MyClassesScreenPreview() {
     FitZoneTheme {
-        MyClassesScreen(navigateToBookClass = {}, onClose = {})
+        BookedClassesScreen(navigateToBookClass = {}, onClose = {})
     }
 }

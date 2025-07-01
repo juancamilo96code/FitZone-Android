@@ -1,6 +1,6 @@
 package com.vamaju.fitzone.data.classes.repository
 
-import com.vamaju.fitzone.data.classes.remote.FirestoreClassTypeDataSource
+import com.vamaju.fitzone.data.classes.remote.ClassTypeDataSource
 import com.vamaju.fitzone.domain.classes.ClassTypeRepository
 import com.vamaju.fitzone.domain.classes.model.ClassType
 import com.vamaju.fitzone.domain.classes.model.toDomain
@@ -14,8 +14,12 @@ import javax.inject.Singleton
  * **/
 @Singleton
 class ClassTypeRepositoryImpl @Inject constructor(
-    private val remoteDataSource: FirestoreClassTypeDataSource,
+    private val remoteDataSource: ClassTypeDataSource,
 ): ClassTypeRepository {
+
+    override suspend fun getClassTypeById(classTypeId: String): ClassType? {
+        return remoteDataSource.getClassTypeById(classTypeId)?.toDomain()
+    }
 
     override fun getClassTypes(): Flow<List<ClassType>> {
         return remoteDataSource.getClassTypes().map { dtos ->

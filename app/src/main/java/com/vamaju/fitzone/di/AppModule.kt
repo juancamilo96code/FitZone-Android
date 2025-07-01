@@ -1,5 +1,6 @@
 package com.vamaju.fitzone.di
 
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -21,4 +22,11 @@ object AppModule {
     fun provideFirebaseFirestore(): FirebaseFirestore {
         return Firebase.firestore
     }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseAuth(): FirebaseAuth {
+        return FirebaseAuth.getInstance()
+    }
+
 }

@@ -6,6 +6,7 @@ import com.vamaju.fitzone.data.classes.model.ClassTypeDto
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,7 +17,18 @@ import javax.inject.Singleton
 @Singleton
 class FirestoreClassTypeDataSourceImpl @Inject constructor(
     private val firestore: FirebaseFirestore
-):FirestoreClassTypeDataSource {
+):ClassTypeDataSource {
+
+    override suspend fun getClassTypeById(classTypeId: String): ClassTypeDto? {
+        return try {
+            val documentSnapshot = firestore.collection("ClassType")
+                .document(classTypeId).get().await()
+            documentSnapshot.toObject(ClassTypeDto::class.java)?.copy(id = documentSnapshot.id)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     override fun getClassTypes(): Flow<List<ClassTypeDto>> = callbackFlow{
         val collectionRef = firestore.collection("ClassType")
 

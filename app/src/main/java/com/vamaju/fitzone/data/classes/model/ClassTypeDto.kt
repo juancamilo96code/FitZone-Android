@@ -1,7 +1,5 @@
 package com.vamaju.fitzone.data.classes.model
 
-import com.google.firebase.firestore.PropertyName
-
 /**
  * @author Juan Camilo Collantes Tovar on 30/06/2025
  * **/

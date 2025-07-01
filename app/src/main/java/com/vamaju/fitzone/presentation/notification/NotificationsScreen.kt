@@ -1,6 +1,7 @@
 package com.vamaju.fitzone.presentation.notification
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +22,9 @@ import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Divider
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,6 +32,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,7 +45,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.vamaju.fitzone.domain.notifications.model.Notification
 import com.vamaju.fitzone.ui.theme.FitZoneTheme
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 /**
  * @author Juan Camilo Collantes Tovar on 28/06/2025
@@ -50,21 +60,13 @@ val OnBackgroundPrimary = Color(0xFF111418)
 val OnBackgroundSecondary = Color(0xFF60758a)
 val BackgroundSurface = Color(0xFFf0f2f5)
 
-
-data class Notification(
-    val title: String,
-    val time: String
-)
-
-data class NotificationGroup(
-    val date: String,
-    val notifications: List<Notification>
-)
-
 @Composable
 fun NotificationsScreen(
+    viewModel: NotificationViewModel = hiltViewModel(),
     onBackClick: () -> Unit
 ) {
+
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -82,29 +84,36 @@ fun NotificationsScreen(
                 .padding(paddingValues)
         ) {
 
-            val notificationsByDate = listOf(
-                NotificationGroup(
-                    date = "Today",
-                    notifications = listOf(
-                        Notification("Yoga Class Reminder", "10:00 AM"),
-                        Notification("New Class Alert: HIIT", "12:30 PM")
-                    )
-                ),
-                NotificationGroup(
-                    date = "Yesterday",
-                    notifications = listOf(
-                        Notification("FitZone Promotion", "09:15 AM"),
-                        Notification("Class Schedule Update", "06:00 PM")
-                    )
-                )
-            )
+            when {
+                uiState.isLoading -> {
+                    item {
+                        CircularProgressIndicator()
+                    }
 
-            notificationsByDate.forEach { group ->
-                item {
-                    NotificationHeader(date = group.date)
                 }
-                items(group.notifications) { notification ->
-                    NotificationItem(notification = notification)
+
+                uiState.errorMessage != null -> {
+                    item {
+                        Text(text = uiState.errorMessage!!, color = MaterialTheme.colorScheme.error)
+                    }
+                }
+
+                uiState.notifications.isEmpty() -> {
+                    item {
+                        Text(
+                            text = "No tienes notificaciones.",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
+
+                else -> {
+                    items(uiState.notifications, key = { it.id }) { notification ->
+                        NotificationCard(
+                            notification = notification,
+                            onNotificationClick = { viewModel.onNotificationClicked(notification.id) }
+                        )
+                    }
                 }
             }
         }
@@ -147,79 +156,6 @@ fun NotificationsTopBar(onBackClick: () -> Unit) {
         )
 
         Spacer(Modifier.width(48.dp))
-    }
-}
-
-/**
- * Encabezado de la sección de notificaciones.
- */
-@Composable
-fun NotificationHeader(date: String) {
-    Text(
-        text = date,
-        style = MaterialTheme.typography.titleLarge.copy(
-            fontWeight = FontWeight.Bold,
-            color = OnBackgroundPrimary,
-            lineHeight = 24.sp,
-            letterSpacing = (-0.015).sp
-        ),
-        modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp)
-    )
-}
-
-/**
- * Elemento de la lista de notificaciones.
- */
-@Composable
-fun NotificationItem(notification: Notification) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White)
-            .padding(16.dp, 8.dp)
-            .height(72.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-
-        Box(
-            modifier = Modifier
-                .size(48.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(BackgroundSurface),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.Notifications,
-                contentDescription = "Notification icon",
-                tint = OnBackgroundPrimary,
-                modifier = Modifier.size(24.dp)
-            )
-        }
-
-
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = notification.title,
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    fontWeight = FontWeight.Medium,
-                    color = OnBackgroundPrimary
-                ),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                text = notification.time,
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    color = OnBackgroundSecondary
-                ),
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
     }
 }
 
@@ -305,5 +241,58 @@ fun BottomNavigationItem(
 fun NotificationsScreenPreview() {
     FitZoneTheme {
         NotificationsScreen(onBackClick = {})
+    }
+}
+
+@Composable
+fun NotificationCard(
+    notification: Notification,
+    onNotificationClick: (String) -> Unit
+) {
+    val dateFormat = remember { SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()) }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onNotificationClick(notification.id) }, // Permite marcar como leída al hacer clic
+        colors = CardDefaults.cardColors(
+            containerColor = if (notification.isRead) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.primaryContainer
+        ),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.Notifications,
+                contentDescription = "Notification Icon",
+                modifier = Modifier.size(24.dp),
+                tint = if (notification.isRead) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = notification.title,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = if (notification.isRead) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Text(
+                    text = notification.message,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (notification.isRead) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = dateFormat.format(notification.timestamp),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (notification.isRead) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onPrimaryContainer.copy(
+                        alpha = 0.7f
+                    )
+                )
+            }
+        }
     }
 }
