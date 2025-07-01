@@ -11,4 +11,8 @@ interface UserRepository {
     suspend fun getUser(userId: String): UserModel?
     suspend fun updateSubscription(userId: String, subscriptionType: String, startDate: Date?)
     suspend fun bookClass(userId: String, classId: String)
+
+    suspend fun login(email: String, password: String)
+    suspend fun register(email: String, password: String)
+    suspend fun logout()
 }

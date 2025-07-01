@@ -37,4 +37,16 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun bookClass(userId: String, classId: String) {
         remoteDataSource.bookUserClass(userId, classId)
     }
+
+    override suspend fun login(email: String, password: String) {
+        userAuthDataSource.login(email, password)
+    }
+
+    override suspend fun register(email: String, password: String) {
+        userAuthDataSource.register(email, password)
+    }
+
+    override suspend fun logout() {
+        userAuthDataSource.logout()
+    }
 }

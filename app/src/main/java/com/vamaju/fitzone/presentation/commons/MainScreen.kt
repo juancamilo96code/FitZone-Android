@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
  * @author Juan Camilo Collantes Tovar on 30/06/2025
  * **/
 @Composable
-fun MainScreen(navHostController: NavHostController, auth: FirebaseAuth) {
+fun MainScreen(navHostController: NavHostController) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
@@ -62,6 +62,6 @@ fun MainScreen(navHostController: NavHostController, auth: FirebaseAuth) {
             }
         }
     ) {
-        NavigationWrapper(auth = auth, navHostController = navHostController)
+        NavigationWrapper( navHostController = navHostController)
     }
 }

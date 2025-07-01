@@ -24,10 +24,12 @@ object UserModule {
     @Provides
     @Singleton
     fun provideUserAuthDataSource(
-        auth: FirebaseAuth
+        auth: FirebaseAuth,
+        firestore: FirebaseFirestore,
     ): UserAuthDataSource {
         return FirebaseAuthUserRepository(
-            auth = auth
+            auth = auth,
+            firestore = firestore
         )
     }
 
