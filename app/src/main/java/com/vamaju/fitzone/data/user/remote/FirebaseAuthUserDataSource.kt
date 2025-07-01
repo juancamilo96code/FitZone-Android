@@ -30,7 +30,7 @@ class FirebaseAuthUserRepository @Inject constructor(
 
         // Crea un documento de usuario inicial en Firestore
         val newUser = UserDto(userId = userId, email = email, classesBooked = emptyList())
-        firestore.collection("User").document(userId).set(newUser).await()
+        firestore.collection("User").document(email).set(newUser).await()
         //updateFcmTokenForUser(userId) // Actualiza el token al registrarse
     }
 

@@ -1,9 +1,7 @@
 package com.vamaju.fitzone.presentation.scheduled_classes
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,7 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,17 +48,6 @@ import com.vamaju.fitzone.ui.theme.FitZoneTheme
  * Muestra una lista de clases próximas con una barra de navegación inferior.
  */
 
-private val OnBackgroundPrimary = Color(0xFF111418)
-private val OnBackgroundSecondary = Color(0xFF60758a)
-private val BackgroundSurface = Color(0xFFf0f2f5)
-private val PrimaryBlue = Color(0xFF3d98f4)
-private val GrayBackground = Color(0xFFdbe0e6)
-
-/**
- * Composable principal de la pantalla de detalles de la clase.
- *
- * Usa un `Scaffold` con una barra superior, un contenido desplazable y una barra inferior.
- */
 @Composable
 fun BookedClassesScreen(
     viewModel: BookedClassesViewModel = hiltViewModel(),
@@ -77,12 +63,10 @@ fun BookedClassesScreen(
         bottomBar = {
             BookClassBottomBar(onBookClass = { selectedClassId?.let { navigateToBookClass(it) } })
         },
-        containerColor = Color.White
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White)
                 .padding(paddingValues)
         ) {
 
@@ -95,7 +79,7 @@ fun BookedClassesScreen(
 
                 uiState.errorMessage != null -> {
                     item {
-                        Text(text = uiState.errorMessage!!, color = MaterialTheme.colorScheme.error)
+                        Text(text = uiState.errorMessage!!)
                     }
                 }
 
@@ -172,7 +156,6 @@ fun ClassDetailsTopBar(onClose: () -> Unit) {
                     text = "ClassModel Details",
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
-                        color = OnBackgroundPrimary
                     ),
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(end = 48.dp)
@@ -184,13 +167,9 @@ fun ClassDetailsTopBar(onClose: () -> Unit) {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = "Close",
-                    tint = OnBackgroundPrimary
                 )
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.White
-        )
     )
 }
 
@@ -203,7 +182,6 @@ fun BookClassBottomBar(onBookClass: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White)
             .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
         Button(
@@ -211,10 +189,6 @@ fun BookClassBottomBar(onBookClass: () -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = PrimaryBlue,
-                contentColor = Color.White
-            ),
             shape = RoundedCornerShape(8.dp),
             contentPadding = PaddingValues(horizontal = 20.dp)
         ) {

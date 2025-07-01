@@ -1,6 +1,5 @@
 package com.vamaju.fitzone.presentation.class_details
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,13 +12,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -35,7 +38,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -56,9 +60,6 @@ import java.util.Locale
  * @author Juan Camilo Collantes Tovar on 28/06/2025
  * **/
 
-private val OnBackgroundPrimary = Color(0xFF111418)
-private val OnBackgroundSecondary = Color(0xFF60758a)
-private val BackgroundSurface = Color(0xFFf0f2f5)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,10 +71,10 @@ fun ClassTypeDetailsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    var showDatePicker by remember { mutableStateOf(true) }
+    var showDatePicker by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
 
-    var showCityDropdown by remember { mutableStateOf(true) }
+    var showCityDropdown by remember { mutableStateOf(false) }
 
     var selectedClassId by remember { mutableStateOf<String?>(null) }
 
@@ -89,12 +90,10 @@ fun ClassTypeDetailsScreen(
         bottomBar = {
             BookClassBottomBar(onBookClass = { selectedClassId?.let { navigateToBookClass(it) } })
         },
-        containerColor = Color.White
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White)
                 .padding(paddingValues)
         ) {
             uiState.classType?.let { classType ->
@@ -119,7 +118,6 @@ fun ClassTypeDetailsScreen(
                             text = classType.name,
                             style = MaterialTheme.typography.headlineSmall.copy(
                                 fontWeight = FontWeight.Bold,
-                                color = OnBackgroundPrimary,
                                 lineHeight = 28.sp,
                                 letterSpacing = (-0.015).sp
                             ),
@@ -127,7 +125,6 @@ fun ClassTypeDetailsScreen(
                         )
                         Text(
                             text = classType.description,
-                            style = MaterialTheme.typography.bodyLarge.copy(color = OnBackgroundPrimary),
                             modifier = Modifier.padding(vertical = 12.dp)
                         )
                     }
@@ -137,11 +134,11 @@ fun ClassTypeDetailsScreen(
             item {
 
                 // Inputs de filtro (Fecha y Ciudad)
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     // Input de Fecha
                     val dateFormatter = remember {
@@ -151,30 +148,45 @@ fun ClassTypeDetailsScreen(
                         value = uiState.selectedDate?.let {
                             dateFormatter.format(it)
                         } ?: "Seleccionar fecha",
+                        enabled = true,
                         onValueChange = { /* No se usa aquí */ },
                         readOnly = true, // Para que no se pueda escribir manualmente
                         modifier = Modifier
-                            .weight(1f)
-                            .clickable { showDatePicker = true },
+                            .onFocusChanged { focusState ->
+                                if (focusState.isFocused){
+                                    showDatePicker = true
+                                }
+                            },
                         label = { Text("Fecha") }
                     )
 
                     // Input de Ciudad (con Dropdown)
-                    Box(modifier = Modifier.weight(1f)) {
+                    ExposedDropdownMenuBox(
+                        modifier = Modifier.fillMaxWidth(),
+                        expanded = showCityDropdown,
+                        onExpandedChange = { showCityDropdown = !showCityDropdown }
+                    ) {
                         OutlinedTextField(
                             value = uiState.availableLocations.find { it.id == uiState.selectedLocationId }?.name
                                 ?: "Seleccionar ciudad",
-                            onValueChange = { /* No se usa aquí */ },
+                            onValueChange = { },
                             readOnly = true,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable { showCityDropdown = true },
-                            label = { Text("Ciudad") }
+                                .menuAnchor(),
+                            label = { Text("Ciudad") },
+                            trailingIcon = {
+                                Icon(
+                                    Icons.Filled.KeyboardArrowDown,
+                                    null,
+                                    Modifier.rotate(if (showCityDropdown) 180f else 0f),
+                                    colorScheme.onBackground
+                                )
+                            },
                         )
-                        DropdownMenu(
+                        ExposedDropdownMenu(
                             expanded = showCityDropdown,
-                            onDismissRequest = { showCityDropdown = false },
-                            modifier = Modifier.fillMaxWidth()
+                            onDismissRequest = { showCityDropdown = false }
                         ) {
                             uiState.availableLocations.forEach { location ->
                                 DropdownMenuItem(
@@ -188,6 +200,7 @@ fun ClassTypeDetailsScreen(
                         }
                     }
                 }
+
 
             }
 
@@ -207,7 +220,6 @@ fun ClassTypeDetailsScreen(
                     text = "Clases disponibles",
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
-                        color = OnBackgroundPrimary
                     ),
                     modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)
                 )
@@ -261,7 +273,7 @@ fun ClassTypeDetailsScreen(
                         ScheduleOptionCard(
                             classItem = classItem,
                             isSelected = classItem.id == selectedClassId,
-                            onClick = {id->
+                            onClick = { id ->
                                 selectedClassId = id
                             })
                     }

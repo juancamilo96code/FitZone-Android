@@ -15,7 +15,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -23,8 +22,6 @@ import androidx.compose.ui.unit.dp
 /**
  * @author Juan Camilo Collantes Tovar on 30/06/2025
  * **/
-
-private val OnBackgroundPrimary = Color(0xFF111418)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,7 +37,6 @@ fun ClassDetailsTopBar(onClose: () -> Unit) {
                     text = "ClassModel Details",
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
-                        color = OnBackgroundPrimary
                     ),
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(end = 48.dp)
@@ -52,12 +48,8 @@ fun ClassDetailsTopBar(onClose: () -> Unit) {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = "Close",
-                    tint = OnBackgroundPrimary
                 )
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.White
-        )
     )
 }
