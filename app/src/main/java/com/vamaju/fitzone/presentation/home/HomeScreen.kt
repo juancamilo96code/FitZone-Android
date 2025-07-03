@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -19,11 +22,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.vamaju.fitzone.presentation.commons.composables.search_bar.SearchBar
-import com.vamaju.fitzone.presentation.commons.composables.topbar.HomeTopBar
+import com.vamaju.fitzone.presentation.commons.composables.topbar.AppToolbar
 import com.vamaju.fitzone.presentation.home.composables.ClassTypeCardItem
 import com.vamaju.fitzone.ui.theme.FitZoneTheme
 
@@ -34,13 +38,24 @@ import com.vamaju.fitzone.ui.theme.FitZoneTheme
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
-    navigateToDetail: (String) -> Unit
+    navigateToDetail: (String) -> Unit,
+    navigateToNotifications: () -> Unit,
+    openMenuDrawer: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
+
         topBar = {
-            HomeTopBar(onNotificationsClick = { })
+            AppToolbar(
+                title = "Mi Aplicación",
+                titleAlignment = TextAlign.Center,
+                startButtonIcon = Icons.Default.Menu,
+                onStartButtonClick = openMenuDrawer,
+                endButtonIcon = Icons.Default.Notifications,
+                onEndButtonClick = navigateToNotifications,
+                showNotificationBadge = true
+            )
         },
     ) { paddingValues ->
         Column(
@@ -128,6 +143,10 @@ fun HomeScreen(
 @Composable
 fun HomeScreenPreview() {
     FitZoneTheme {
-        HomeScreen {}
+        HomeScreen(
+            navigateToDetail = {},
+            navigateToNotifications = {},
+            openMenuDrawer = {}
+        )
     }
 }

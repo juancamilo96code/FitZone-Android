@@ -16,6 +16,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.vamaju.fitzone.presentation.navigation.Home
 import com.vamaju.fitzone.presentation.navigation.MyClasses
 import com.vamaju.fitzone.presentation.navigation.NavigationWrapper
 import com.vamaju.fitzone.presentation.navigation.Notifications
@@ -29,11 +31,21 @@ fun MainScreen(navHostController: NavHostController) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    var enable by remember { mutableStateOf(false) }
+    val navBackStackEntry by navHostController.currentBackStackEntryAsState()
+    val currentRouteWithParams = navBackStackEntry?.destination?.route
+    val currentRoute = currentRouteWithParams?.substringBefore("?")?.substringBefore("/{")
+
+    val toggleDrawerMenu: () -> Unit = {
+        scope.launch {
+            drawerState.apply {
+                if (isClosed) open() else close()
+            }
+        }
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
-        gesturesEnabled = enable,
+        gesturesEnabled = currentRoute == Home.serializer().descriptor.serialName,
         drawerContent = {
 
             ModalDrawerSheet {
@@ -43,7 +55,7 @@ fun MainScreen(navHostController: NavHostController) {
                     label = { Text("Notificaciones") },
                     selected = false,
                     onClick = {
-                        scope.launch { drawerState.close() }
+                        toggleDrawerMenu()
                         navHostController.navigate(Notifications) {
                         }
                     }
@@ -52,7 +64,7 @@ fun MainScreen(navHostController: NavHostController) {
                     label = { Text("Mis Clases") },
                     selected = false,
                     onClick = {
-                        scope.launch { drawerState.close() }
+                        toggleDrawerMenu
                         navHostController.navigate(MyClasses) {
                         }
                     }
@@ -62,9 +74,7 @@ fun MainScreen(navHostController: NavHostController) {
     ) {
         NavigationWrapper(
             navHostController = navHostController,
-            onUserLogged = {
-                enable = true
-            }
+            openMenuDrawer = { toggleDrawerMenu() }
         )
     }
 }
