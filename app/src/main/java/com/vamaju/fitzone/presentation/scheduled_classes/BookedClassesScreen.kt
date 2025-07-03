@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -33,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.vamaju.fitzone.presentation.class_details.composables.ScheduleOptionCard
+import com.vamaju.fitzone.presentation.commons.composables.topbar.AppToolbar
 import com.vamaju.fitzone.ui.theme.FitZoneTheme
 
 /**
@@ -49,13 +51,18 @@ import com.vamaju.fitzone.ui.theme.FitZoneTheme
 fun BookedClassesScreen(
     viewModel: BookedClassesViewModel = hiltViewModel(),
     navigateToBookClass: (String) -> Unit,
-    onClose: () -> Unit
+    onBackClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var selectedClassId by remember { mutableStateOf<String?>(null) }
     Scaffold(
         topBar = {
-            ClassDetailsTopBar(onClose = onClose)
+            AppToolbar(
+                title = "Detalle del Artículo",
+                titleAlignment = TextAlign.Start,
+                startButtonIcon = Icons.AutoMirrored.Filled.ArrowBack,
+                onStartButtonClick = onBackClick
+            )
         },
     ) { paddingValues ->
         LazyColumn(
@@ -209,6 +216,6 @@ fun BookClassBottomBar(onBookClass: () -> Unit) {
 @Composable
 fun MyClassesScreenPreview() {
     FitZoneTheme {
-        BookedClassesScreen(navigateToBookClass = {}, onClose = {})
+        BookedClassesScreen(navigateToBookClass = {}, onBackClick = {})
     }
 }

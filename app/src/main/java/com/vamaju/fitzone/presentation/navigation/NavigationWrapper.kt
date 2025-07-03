@@ -1,11 +1,7 @@
 package com.vamaju.fitzone.presentation.navigation
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -17,7 +13,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.google.firebase.auth.FirebaseAuth
 import com.vamaju.fitzone.presentation.book_class.BookClassScreen
 import com.vamaju.fitzone.presentation.class_details.ClassTypeDetailsScreen
 import com.vamaju.fitzone.presentation.home.HomeScreen
@@ -30,22 +25,21 @@ import com.vamaju.fitzone.presentation.scheduled_classes.BookedClassesScreen
  * @author Juan Camilo Collantes Tovar on 27/06/2025
  * **/
 @Composable
-fun NavigationWrapper(navHostController: NavHostController,
-                      authViewModel: AuthViewModel = hiltViewModel(),
-                      onUserLogged: () -> Unit
+fun NavigationWrapper(
+    navHostController: NavHostController,
+    authViewModel: AuthViewModel = hiltViewModel(),
+    openMenuDrawer: () -> Unit
 ) {
 
     val startDestination by authViewModel.startDestination.collectAsState()
 
     if (startDestination.isBlank()) {
-        // Mostrar una pantalla de carga mientras se decide la ruta de inicio
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
         }
     } else {
         NavHost(
             navController = navHostController,
-            modifier = Modifier.padding(WindowInsets.systemBars.asPaddingValues()),
             startDestination = if (startDestination == "Home") Home else Login
         ) {
 
@@ -58,13 +52,16 @@ fun NavigationWrapper(navHostController: NavHostController,
             }
 
             composable<Home>() {
-                onUserLogged()
                 HomeScreen(
                     navigateToDetail = { classTypeId ->
                         navHostController.navigate(
                             ClassTypeDetails(classTypeId = classTypeId)
                         )
-                    }
+                    },
+                    navigateToNotifications = {
+                        navHostController.navigate(Notifications)
+                    },
+                    openMenuDrawer = openMenuDrawer
                 )
             }
 
@@ -74,18 +71,22 @@ fun NavigationWrapper(navHostController: NavHostController,
                     classTypeId = classTypeDetails.classTypeId,
                     navigateToBookClass = { id ->
                         navHostController.navigate(BookClass(id))
+                    },
+                    onBackClick = {
+                        navHostController.popBackStack()
                     }
-                ) {}
+                )
 
             }
 
             composable<BookClass>() { backStackEntry ->
                 val bookClass: BookClass = backStackEntry.toRoute()
                 BookClassScreen(
-                    classId = bookClass.classId
-                ) {
-
-                }
+                    classId = bookClass.classId,
+                    onBackClick = {
+                        navHostController.popBackStack()
+                    }
+                )
             }
 
             composable<MyClasses> {
@@ -93,7 +94,10 @@ fun NavigationWrapper(navHostController: NavHostController,
                     navigateToBookClass = {
                         navHostController.navigate(BookClass(it))
                     },
-                    onClose = {})
+                    onBackClick = {
+                        navHostController.popBackStack()
+                    }
+                )
             }
 
             composable<Payments>() {
@@ -101,7 +105,11 @@ fun NavigationWrapper(navHostController: NavHostController,
             }
 
             composable<Notifications>() {
-                NotificationsScreen { }
+                NotificationsScreen(
+                    onBackClick = {
+                        navHostController.popBackStack()
+                    }
+                )
             }
         }
     }
