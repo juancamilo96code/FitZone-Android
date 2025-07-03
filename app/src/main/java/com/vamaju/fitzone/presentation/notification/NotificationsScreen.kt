@@ -1,7 +1,6 @@
 package com.vamaju.fitzone.presentation.notification
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,7 +19,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -31,12 +29,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineBreak
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.vamaju.fitzone.domain.notifications.model.Notification
+import com.vamaju.fitzone.presentation.commons.composables.topbar.AppToolbar
 import com.vamaju.fitzone.ui.theme.FitZoneTheme
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -55,7 +53,12 @@ fun NotificationsScreen(
 
     Scaffold(
         topBar = {
-            NotificationsTopBar(onBackClick = onBackClick)
+            AppToolbar(
+                title = "Detalle del Artículo",
+                titleAlignment = TextAlign.Start,
+                startButtonIcon = Icons.AutoMirrored.Filled.ArrowBack,
+                onStartButtonClick = onBackClick
+            )
         }
     ) { paddingValues ->
 
@@ -75,8 +78,10 @@ fun NotificationsScreen(
 
                 uiState.errorMessage != null -> {
                     item {
-                        Text(text = uiState.errorMessage!!, color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.padding(16.dp))
+                        Text(
+                            text = uiState.errorMessage!!, color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.padding(16.dp)
+                        )
                     }
                 }
 
@@ -104,77 +109,6 @@ fun NotificationsScreen(
     }
 }
 
-/**
- * Encabezado de la barra superior.
- */
-@Composable
-fun NotificationsTopBar(onBackClick: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp, 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-
-        IconButton(
-            onClick = onBackClick,
-            modifier = Modifier.size(48.dp)
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Go back",
-            )
-        }
-
-        Spacer(Modifier.weight(1f))
-        Text(
-            text = "Notifications",
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontWeight = FontWeight.Bold,
-                lineHeight = 24.sp,
-                letterSpacing = (-0.015).sp
-            )
-        )
-
-        Spacer(Modifier.width(48.dp))
-    }
-}
-
-
-/**
- * Elemento de la barra de navegación inferior.
- */
-@Composable
-fun BottomNavigationItem(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    label: String,
-    isSelected: Boolean
-) {
-
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = Modifier.width(64.dp)
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = label,
-            modifier = Modifier.size(24.dp)
-        )
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall.copy(
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Medium,
-                lineBreak = LineBreak.Simple
-            )
-        )
-    }
-}
-
-/**
- * Vista previa para el composable principal.
- */
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun NotificationsScreenPreview() {

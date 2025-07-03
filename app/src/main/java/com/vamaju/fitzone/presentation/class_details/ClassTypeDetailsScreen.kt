@@ -1,10 +1,8 @@
 package com.vamaju.fitzone.presentation.class_details
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
@@ -29,7 +28,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,6 +40,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,7 +49,7 @@ import coil.compose.AsyncImage
 import com.vamaju.fitzone.presentation.class_details.composables.ScheduleOptionCard
 import com.vamaju.fitzone.presentation.commons.composables.SectionTitle
 import com.vamaju.fitzone.presentation.commons.composables.bottom_bar.BookClassBottomBar
-import com.vamaju.fitzone.presentation.commons.composables.topbar.ClassDetailsTopBar
+import com.vamaju.fitzone.presentation.commons.composables.topbar.AppToolbar
 import com.vamaju.fitzone.ui.theme.FitZoneTheme
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -67,7 +66,7 @@ fun ClassTypeDetailsScreen(
     viewModel: ClassTypeDetailsViewModel = hiltViewModel(),
     classTypeId: String,
     navigateToBookClass: (String) -> Unit,
-    onClose: () -> Unit
+    onBackClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -78,14 +77,14 @@ fun ClassTypeDetailsScreen(
 
     var selectedClassId by remember { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(Unit) {
-        viewModel.loadInitialData(classTypeId)
-        viewModel.observeFilteredClasses(classTypeId)
-    }
-
     Scaffold(
         topBar = {
-            ClassDetailsTopBar(onClose = onClose)
+            AppToolbar(
+                title = "Detalle del Artículo",
+                titleAlignment = TextAlign.Start,
+                startButtonIcon = Icons.AutoMirrored.Filled.ArrowBack,
+                onStartButtonClick = onBackClick
+            )
         },
         bottomBar = {
             BookClassBottomBar(onBookClass = { selectedClassId?.let { navigateToBookClass(it) } })
@@ -153,7 +152,7 @@ fun ClassTypeDetailsScreen(
                         readOnly = true, // Para que no se pueda escribir manualmente
                         modifier = Modifier
                             .onFocusChanged { focusState ->
-                                if (focusState.isFocused){
+                                if (focusState.isFocused) {
                                     showDatePicker = true
                                 }
                             },
@@ -200,8 +199,6 @@ fun ClassTypeDetailsScreen(
                         }
                     }
                 }
-
-
             }
 
             item {
@@ -330,6 +327,6 @@ fun ClassTypeDetailsScreen(
 @Composable
 fun ClassDetailsScreenPreview() {
     FitZoneTheme {
-        ClassTypeDetailsScreen(classTypeId = "Yoga", navigateToBookClass = {}, onClose = {})
+        ClassTypeDetailsScreen(classTypeId = "Yoga", navigateToBookClass = {}, onBackClick = {})
     }
 }
