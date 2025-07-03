@@ -1,5 +1,6 @@
 package com.vamaju.fitzone.presentation.class_details
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vamaju.fitzone.domain.classes.usecases.GetClassTypeDetailsUseCase
@@ -23,7 +24,12 @@ class ClassTypeDetailsViewModel @Inject constructor(
     private val getClassTypeDetailsUseCase: GetClassTypeDetailsUseCase,
     private val getLocationsUseCase: GetLocationsUseCase,
     private val getFilteredClassesUseCase: GetFilteredClassesUseCase,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
+    // Obtener classTypeId directamente del SavedStateHandle
+    private val classTypeId: String = savedStateHandle.get<String>("classTypeId") // <--- ¡Aquí lo obtienes!
+        ?: throw IllegalArgumentException("classTypeId argument is required")
 
     private val _uiState = MutableStateFlow(ClassDetailUiState(isLoading = true))
     val uiState: StateFlow<ClassDetailUiState> = _uiState.asStateFlow()
@@ -32,7 +38,12 @@ class ClassTypeDetailsViewModel @Inject constructor(
     private val _selectedDate = MutableStateFlow<Date?>(null)
     private val _selectedLocationId = MutableStateFlow<String?>(null)
 
-    fun loadInitialData(classTypeId: String) {
+    init {
+        loadInitialData()
+        observeFilteredClasses()
+    }
+
+    private fun loadInitialData() {
         viewModelScope.launch {
             try {
                 // Cargar los detalles del ClassType y las ubicaciones en paralelo
@@ -54,7 +65,7 @@ class ClassTypeDetailsViewModel @Inject constructor(
         }
     }
 
-     fun observeFilteredClasses(classTypeId: String) {
+     private fun observeFilteredClasses() {
         viewModelScope.launch {
             // Combina los filtros (fecha y ciudad) con el caso de uso para re-ejecutar la consulta
             // solo cuando los filtros cambian. Esto es clave para la eficiencia.

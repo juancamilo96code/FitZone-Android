@@ -28,7 +28,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -77,11 +76,6 @@ fun ClassTypeDetailsScreen(
     var showCityDropdown by remember { mutableStateOf(false) }
 
     var selectedClassId by remember { mutableStateOf<String?>(null) }
-
-    LaunchedEffect(Unit) {
-        viewModel.loadInitialData(classTypeId)
-        viewModel.observeFilteredClasses(classTypeId)
-    }
 
     Scaffold(
         topBar = {
@@ -205,8 +199,6 @@ fun ClassTypeDetailsScreen(
                         }
                     }
                 }
-
-
             }
 
             item {
