@@ -1,5 +1,6 @@
 package com.vamaju.fitzone.data.classes.remote
 
+import android.util.Log
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.vamaju.fitzone.data.classes.model.ClassDto
@@ -32,6 +33,7 @@ class FirestoreClassDetailDataSource @Inject constructor(
 
 
         if (dateFilter != null) {
+            Log.d("FirestoreClassDetail", "Fecha seleccionada: $dateFilter")
             val calendar = Calendar.getInstance().apply { time = dateFilter }
             calendar.set(Calendar.HOUR_OF_DAY, 0)
             calendar.set(Calendar.MINUTE, 0)
@@ -48,11 +50,13 @@ class FirestoreClassDetailDataSource @Inject constructor(
         }
 
         if (!cityFilter.isNullOrBlank()) {
+            Log.d("FirestoreClassDetail", "Ciudad seleccionada: $cityFilter")
             query = query.whereEqualTo("locationId", cityFilter)
         }
 
         val subscription = query.addSnapshotListener { snapshot, exception ->
             if (exception != null) {
+                Log.e("FirestoreClassDetail", "Error al obtener clases", exception)
                 close(exception)
                 return@addSnapshotListener
             }

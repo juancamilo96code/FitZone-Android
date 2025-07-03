@@ -1,5 +1,6 @@
 package com.vamaju.fitzone.presentation.class_details
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,10 +9,14 @@ import com.vamaju.fitzone.domain.classes.usecases.GetFilteredClassesUseCase
 import com.vamaju.fitzone.domain.locations.usecases.GetLocationsUseCase
 import com.vamaju.fitzone.presentation.class_details.model.ClassDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
@@ -65,28 +70,43 @@ class ClassTypeDetailsViewModel @Inject constructor(
         }
     }
 
-     private fun observeFilteredClasses() {
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun observeFilteredClasses() {
         viewModelScope.launch {
-            // Combina los filtros (fecha y ciudad) con el caso de uso para re-ejecutar la consulta
-            // solo cuando los filtros cambian. Esto es clave para la eficiencia.
+            // Combina los flujos de filtros
             combine(
                 _selectedDate,
                 _selectedLocationId
             ) { date, locationId ->
-                // Este `combine` dispara una nueva llamada al caso de uso
-                // cada vez que `_selectedDate` o `_selectedLocationId` cambian
+                // Este bloque se ejecuta cada vez que _selectedDate o _selectedLocationId cambian.
+                // Aquí, el log SÍ se disparará cada vez que cambien los filtros.
+                Log.d("ClassTypeDetailsViewModel", "Filters changed: Date=$date, LocationId=$locationId. Fetching filtered classes...")
+                // Devuelve el Flow del caso de uso
                 getFilteredClassesUseCase(classTypeId, date, locationId)
-            }.collect { flowOfClasses ->
-                // Recogemos el Flow de clases filtradas
-                _uiState.value = _uiState.value.copy(isLoading = true) // Muestra el loading al filtrar
-                flowOfClasses.collect { classes ->
+            }.flatMapLatest { flowOfClasses ->
+                    // flatMapLatest es crucial aquí. Cada vez que el combine anterior emite un nuevo Flow,
+                    // flatMapLatest cancela la colección del Flow anterior y empieza a recolectar el nuevo.
+                    // Los operadores onStart y catch se aplican a CADA NUEVO FLUJO que viene de getFilteredClassesUseCase.
+                    flowOfClasses
+                        .onStart {
+                            // Muestra el loading cuando se inicia una nueva consulta de filtrado
+                            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+                            Log.d("ClassTypeDetailsViewModel", "Starting new filtered classes query...")
+                        }
+                        .catch { e ->
+                            // Maneja errores específicos de la consulta de filtrado
+                            _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = "Error al filtrar clases: ${e.message}")
+                            Log.e("ClassTypeDetailsViewModel", "Error in filtered classes query: ${e.message}")
+                        }
+                }.collect { classes ->
+                    // Recolecta los resultados de las clases filtradas
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         filteredClasses = classes,
                         errorMessage = null
                     )
+                    Log.d("ClassTypeDetailsViewModel", "Filtered classes received: ${classes.size} items.")
                 }
-            }
         }
     }
 
